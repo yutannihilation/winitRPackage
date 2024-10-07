@@ -73,6 +73,10 @@ impl AppController {
         if let Some(window) = self.app.window.take() {
             drop(window)
         }
+
+        let timeout = Some(Duration::ZERO);
+        let _status = self.event_loop.pump_app_events(timeout, &mut self.app);
+
         Ok(())
     }
 }
