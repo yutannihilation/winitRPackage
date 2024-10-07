@@ -1,4 +1,4 @@
-
+SEXP savvy_foo__ffi(void);
 
 // methods and associated functions for AppController
 SEXP savvy_AppController_new__ffi(void);

@@ -24,6 +24,10 @@ NULL
 }
 
 
+`foo` <- function() {
+  invisible(.Call(savvy_foo__impl))
+}
+
 ### wrapper functions for AppController
 
 `AppController_resize` <- function(self) {

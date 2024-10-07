@@ -34,6 +34,10 @@ SEXP handle_result(SEXP res_) {
     return (SEXP)res;
 }
 
+SEXP savvy_foo__impl(void) {
+    SEXP res = savvy_foo__ffi();
+    return handle_result(res);
+}
 
 SEXP savvy_AppController_new__impl(void) {
     SEXP res = savvy_AppController_new__ffi();
@@ -52,7 +56,7 @@ SEXP savvy_AppController_close__impl(SEXP self__) {
 
 
 static const R_CallMethodDef CallEntries[] = {
-
+    {"savvy_foo__impl", (DL_FUNC) &savvy_foo__impl, 0},
     {"savvy_AppController_new__impl", (DL_FUNC) &savvy_AppController_new__impl, 0},
     {"savvy_AppController_resize__impl", (DL_FUNC) &savvy_AppController_resize__impl, 3},
     {"savvy_AppController_close__impl", (DL_FUNC) &savvy_AppController_close__impl, 1},
