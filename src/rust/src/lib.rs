@@ -1,13 +1,13 @@
-use std::time::Duration;
+use std::{thread::JoinHandle, time::Duration};
 
 use savvy::savvy;
 use winit::{
-    application::ApplicationHandler,
-    dpi::LogicalSize,
-    event::WindowEvent,
-    platform::pump_events::EventLoopExtPumpEvents,
-    window::{WindowAttributes, WindowButtons},
+    application::ApplicationHandler, dpi::LogicalSize, event::WindowEvent,
+    platform::pump_events::EventLoopExtPumpEvents, window::WindowAttributes,
 };
+
+#[cfg(windows)]
+use winit::platform::windows::EventLoopBuilderExtWindows;
 
 #[derive(Debug)]
 pub struct DummyEvent {}
@@ -55,9 +55,7 @@ impl ApplicationHandler<DummyEvent> for App {
 }
 
 fn create_window_attributes() -> WindowAttributes {
-    let attrs = WindowAttributes::default()
-        .with_title("A fantastic window!")
-        .with_enabled_buttons(WindowButtons::empty());
+    let attrs = WindowAttributes::default().with_title("A fantastic window!");
 
     // // platform specific settings
     // if cfg!(windows) {
@@ -124,4 +122,23 @@ fn foo() -> savvy::Result<()> {
     event_loop.run_app(&mut app).unwrap();
 
     Ok(())
+}
+
+#[savvy]
+struct Foo2(JoinHandle<()>);
+
+#[savvy]
+fn foo2() -> savvy::Result<Foo2> {
+    let h = std::thread::spawn(|| {
+        let event_loop = winit::event_loop::EventLoop::<DummyEvent>::with_user_event()
+            .with_any_thread(true)
+            .build()
+            .unwrap();
+        let mut app = App::default();
+
+        // this blocks until event_loop exits
+        event_loop.run_app(&mut app).unwrap();
+    });
+
+    Ok(Foo2(h))
 }

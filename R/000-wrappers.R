@@ -28,6 +28,11 @@ NULL
   invisible(.Call(savvy_foo__impl))
 }
 
+
+`foo2` <- function() {
+  .savvy_wrap_Foo2(.Call(savvy_foo2__impl))
+}
+
 ### wrapper functions for AppController
 
 `AppController_resize` <- function(self) {
@@ -87,4 +92,49 @@ class(`AppController`) <- "AppController__bundle"
 
 #' @export
 `[[<-.AppController__bundle` <- function(x, i, value) stop("AppController cannot be modified", call. = FALSE)
+
+### wrapper functions for Foo2
+
+
+`.savvy_wrap_Foo2` <- function(ptr) {
+  e <- new.env(parent = emptyenv())
+  e$.ptr <- ptr
+
+
+  class(e) <- "Foo2"
+  e
+}
+
+#' @export
+`$<-.Foo2` <- function(x, name, value) stop("Foo2 cannot be modified", call. = FALSE)
+
+#' @export
+`[[<-.Foo2` <- function(x, i, value) stop("Foo2 cannot be modified", call. = FALSE)
+
+
+
+`Foo2` <- new.env(parent = emptyenv())
+
+#' @export
+`$<-.Foo2` <- function(x, name, value) stop("Foo2 cannot be modified", call. = FALSE)
+
+#' @export
+`[[<-.Foo2` <- function(x, i, value) stop("Foo2 cannot be modified", call. = FALSE)
+
+### associated functions for Foo2
+
+
+
+class(`Foo2`) <- "Foo2__bundle"
+
+#' @export
+`print.Foo2__bundle` <- function(x, ...) {
+  cat('Foo2')
+}
+
+#' @export
+`$<-.Foo2__bundle` <- function(x, name, value) stop("Foo2 cannot be modified", call. = FALSE)
+
+#' @export
+`[[<-.Foo2__bundle` <- function(x, i, value) stop("Foo2 cannot be modified", call. = FALSE)
 
