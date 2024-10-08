@@ -5,15 +5,15 @@ use winit::{
     application::ApplicationHandler,
     dpi::LogicalSize,
     event::WindowEvent,
-    platform::{self, pump_events::EventLoopExtPumpEvents},
+    platform::pump_events::EventLoopExtPumpEvents,
     window::{WindowAttributes, WindowButtons},
 };
 
 #[derive(Debug)]
-struct DummyEvent {}
+pub struct DummyEvent {}
 
 #[derive(Default)]
-struct App {
+pub struct App {
     window: Option<winit::window::Window>,
 }
 
@@ -29,15 +29,19 @@ impl ApplicationHandler<DummyEvent> for App {
         window_id: winit::window::WindowId,
         event: winit::event::WindowEvent,
     ) {
-        savvy::r_eprintln!("{event:?}");
-
+        // savvy::r_eprintln!("{event:?}");
         let window = match self.window.as_ref() {
             Some(window) => window,
             None => return,
         };
 
         match event {
-            WindowEvent::CloseRequested => event_loop.exit(),
+            WindowEvent::CloseRequested => {
+                if let Some(window) = self.window.take() {
+                    drop(window)
+                }
+                event_loop.exit();
+            }
             WindowEvent::RedrawRequested => {
                 window.request_redraw();
             }
@@ -46,12 +50,7 @@ impl ApplicationHandler<DummyEvent> for App {
     }
 
     fn user_event(&mut self, event_loop: &winit::event_loop::ActiveEventLoop, event: DummyEvent) {
-        savvy::r_eprintln!("User event!");
-        if self.window.is_none() {
-            let window_attributes = WindowAttributes::default().with_title("A fantastic window!");
-            self.window = Some(event_loop.create_window(window_attributes).unwrap());
-        }
-        self.window.as_mut().unwrap().focus_window();
+        event_loop.exit();
     }
 }
 
@@ -60,13 +59,14 @@ fn create_window_attributes() -> WindowAttributes {
         .with_title("A fantastic window!")
         .with_enabled_buttons(WindowButtons::empty());
 
-    // platform specific settings
-    if cfg!(windows) {
-        use winit::platform::windows::WindowAttributesExtWindows;
-        attrs.with_corner_preference(platform::windows::CornerPreference::DoNotRound)
-    } else {
-        attrs
-    }
+    // // platform specific settings
+    // if cfg!(windows) {
+    //     use winit::platform::windows::WindowAttributesExtWindows;
+    //     attrs.with_corner_preference(platform::windows::CornerPreference::DoNotRound)
+    // } else {
+    //     attrs
+    // }
+    attrs
 }
 
 #[savvy]
@@ -115,28 +115,13 @@ impl AppController {
 
 #[savvy]
 fn foo() -> savvy::Result<()> {
-    let mut event_loop = winit::event_loop::EventLoop::<DummyEvent>::with_user_event()
+    let event_loop = winit::event_loop::EventLoop::<DummyEvent>::with_user_event()
         .build()
         .unwrap();
     let mut app = App::default();
 
-    let proxy = event_loop.create_proxy();
-
-    // this thread keeps sending DummyEvent, however, only the ones sent before
-    // pump_app_events() will be processed. Others are just ignored.
-    std::thread::spawn(move || {
-        for _ in 1..10 {
-            proxy.send_event(DummyEvent {}).unwrap();
-            std::thread::sleep(Duration::from_secs(1));
-        }
-    });
-
-    std::thread::sleep(Duration::from_secs(3));
-
-    let timeout = Some(Duration::ZERO);
-    let _status = event_loop.pump_app_events(timeout, &mut app);
-
-    std::thread::sleep(Duration::from_secs(3));
+    // this blocks until event_loop exits
+    event_loop.run_app(&mut app).unwrap();
 
     Ok(())
 }
