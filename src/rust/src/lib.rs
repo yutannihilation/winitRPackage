@@ -11,8 +11,11 @@ use winit::{
 #[cfg(windows)]
 use winit::platform::windows::EventLoopBuilderExtWindows;
 
-#[derive(Debug)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug)]
 pub enum DummyEvent {
+    Connect { server_name: String },
     NewWindow { title: String },
     CloseWindow,
 }
@@ -65,6 +68,7 @@ impl ApplicationHandler<DummyEvent> for App {
             DummyEvent::CloseWindow => {
                 self.close_window();
             }
+            _ => {}
         }
     }
 }
@@ -106,7 +110,7 @@ fn create_event_loop(any_thread: bool) -> winit::event_loop::EventLoop<DummyEven
 }
 
 #[cfg(target_os = "linux")]
-fn create_event_loop(any_thread: bool) -> EventLoop<DummyEvent> {
+pub fn create_event_loop(any_thread: bool) -> EventLoop<DummyEvent> {
     use winit::platform::wayland::EventLoopBuilderExtWayland;
 
     EventLoop::<DummyEvent>::with_user_event()
