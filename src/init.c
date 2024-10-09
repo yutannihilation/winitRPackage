@@ -34,23 +34,9 @@ SEXP handle_result(SEXP res_) {
     return (SEXP)res;
 }
 
-SEXP savvy_foo__impl(void) {
-    SEXP res = savvy_foo__ffi();
-    return handle_result(res);
-}
 
-SEXP savvy_foo2__impl(void) {
-    SEXP res = savvy_foo2__ffi();
-    return handle_result(res);
-}
-
-SEXP savvy_AppController_new__impl(void) {
-    SEXP res = savvy_AppController_new__ffi();
-    return handle_result(res);
-}
-
-SEXP savvy_AppController_resize__impl(SEXP self__, SEXP c_arg__width, SEXP c_arg__height) {
-    SEXP res = savvy_AppController_resize__ffi(self__, c_arg__width, c_arg__height);
+SEXP savvy_AppController_new__impl(SEXP c_arg__title) {
+    SEXP res = savvy_AppController_new__ffi(c_arg__title);
     return handle_result(res);
 }
 
@@ -60,14 +46,10 @@ SEXP savvy_AppController_close__impl(SEXP self__) {
 }
 
 
-
 static const R_CallMethodDef CallEntries[] = {
-    {"savvy_foo__impl", (DL_FUNC) &savvy_foo__impl, 0},
-    {"savvy_foo2__impl", (DL_FUNC) &savvy_foo2__impl, 0},
-    {"savvy_AppController_new__impl", (DL_FUNC) &savvy_AppController_new__impl, 0},
-    {"savvy_AppController_resize__impl", (DL_FUNC) &savvy_AppController_resize__impl, 3},
-    {"savvy_AppController_close__impl", (DL_FUNC) &savvy_AppController_close__impl, 1},
 
+    {"savvy_AppController_new__impl", (DL_FUNC) &savvy_AppController_new__impl, 1},
+    {"savvy_AppController_close__impl", (DL_FUNC) &savvy_AppController_close__impl, 1},
     {NULL, NULL, 0}
 };
 
