@@ -24,56 +24,72 @@ NULL
 }
 
 
-### wrapper functions for AppController
+`run_event_loop_on_main_thread` <- function() {
+  invisible(.Call(savvy_run_event_loop_on_main_thread__impl))
+}
 
-`AppController_close` <- function(self) {
-  function() {
-    invisible(.Call(savvy_AppController_close__impl, `self`))
+
+`run_event_loop_on_spawned_thread` <- function() {
+  invisible(.Call(savvy_run_event_loop_on_spawned_thread__impl))
+}
+
+### wrapper functions for WindowController
+
+`WindowController_open_window` <- function(self) {
+  function(`title`) {
+    invisible(.Call(savvy_WindowController_open_window__impl, `self`, `title`))
   }
 }
 
-`.savvy_wrap_AppController` <- function(ptr) {
+`WindowController_close_window` <- function(self) {
+  function() {
+    invisible(.Call(savvy_WindowController_close_window__impl, `self`))
+  }
+}
+
+`.savvy_wrap_WindowController` <- function(ptr) {
   e <- new.env(parent = emptyenv())
   e$.ptr <- ptr
-  e$`close` <- `AppController_close`(ptr)
+  e$`open_window` <- `WindowController_open_window`(ptr)
+  e$`close_window` <- `WindowController_close_window`(ptr)
 
-  class(e) <- "AppController"
+  class(e) <- "WindowController"
   e
 }
 
 #' @export
-`$<-.AppController` <- function(x, name, value) stop("AppController cannot be modified", call. = FALSE)
+`$<-.WindowController` <- function(x, name, value) stop("WindowController cannot be modified", call. = FALSE)
 
 #' @export
-`[[<-.AppController` <- function(x, i, value) stop("AppController cannot be modified", call. = FALSE)
+`[[<-.WindowController` <- function(x, i, value) stop("WindowController cannot be modified", call. = FALSE)
 
 
 
-`AppController` <- new.env(parent = emptyenv())
-
-#' @export
-`$<-.AppController` <- function(x, name, value) stop("AppController cannot be modified", call. = FALSE)
+`WindowController` <- new.env(parent = emptyenv())
 
 #' @export
-`[[<-.AppController` <- function(x, i, value) stop("AppController cannot be modified", call. = FALSE)
+`$<-.WindowController` <- function(x, name, value) stop("WindowController cannot be modified", call. = FALSE)
 
-### associated functions for AppController
+#' @export
+`[[<-.WindowController` <- function(x, i, value) stop("WindowController cannot be modified", call. = FALSE)
 
-`AppController`$`new` <- function(`title`) {
-  .savvy_wrap_AppController(.Call(savvy_AppController_new__impl, `title`))
+### associated functions for WindowController
+
+`WindowController`$`new` <- function() {
+  .savvy_wrap_WindowController(.Call(savvy_WindowController_new__impl))
 }
 
 
-class(`AppController`) <- "AppController__bundle"
+class(`WindowController`) <- "WindowController__bundle"
 
 #' @export
-`print.AppController__bundle` <- function(x, ...) {
-  cat('AppController')
+`print.WindowController__bundle` <- function(x, ...) {
+  cat('WindowController')
 }
 
 #' @export
-`$<-.AppController__bundle` <- function(x, name, value) stop("AppController cannot be modified", call. = FALSE)
+`$<-.WindowController__bundle` <- function(x, name, value) stop("WindowController cannot be modified", call. = FALSE)
 
 #' @export
-`[[<-.AppController__bundle` <- function(x, i, value) stop("AppController cannot be modified", call. = FALSE)
+`[[<-.WindowController__bundle` <- function(x, i, value) stop("WindowController cannot be modified", call. = FALSE)
 

@@ -1,9 +1,10 @@
-use std::sync::LazyLock;
+use std::sync::OnceLock;
 
 use savvy::savvy;
 use winit::{
     application::ApplicationHandler,
-    event::{self, WindowEvent},
+    event::WindowEvent,
+    event_loop::{ActiveEventLoop, EventLoop, EventLoopProxy},
     window::WindowAttributes,
 };
 
@@ -30,12 +31,12 @@ impl App {
 }
 
 impl ApplicationHandler<DummyEvent> for App {
-    fn resumed(&mut self, event_loop: &winit::event_loop::ActiveEventLoop) {}
+    fn resumed(&mut self, _event_loop: &ActiveEventLoop) {}
 
     fn window_event(
         &mut self,
-        event_loop: &winit::event_loop::ActiveEventLoop,
-        window_id: winit::window::WindowId,
+        _event_loop: &ActiveEventLoop,
+        _window_id: winit::window::WindowId,
         event: winit::event::WindowEvent,
     ) {
         // savvy::r_eprintln!("{event:?}");
@@ -55,7 +56,7 @@ impl ApplicationHandler<DummyEvent> for App {
         }
     }
 
-    fn user_event(&mut self, event_loop: &winit::event_loop::ActiveEventLoop, event: DummyEvent) {
+    fn user_event(&mut self, event_loop: &ActiveEventLoop, event: DummyEvent) {
         match event {
             DummyEvent::NewWindow { title } => {
                 let window_attributes = create_window_attributes(title);
@@ -90,8 +91,8 @@ fn add_platform_specific_attributes(attrs: WindowAttributes) -> WindowAttributes
 }
 
 #[savvy]
-struct AppController {
-    event_loop: winit::event_loop::EventLoopProxy<DummyEvent>,
+struct WindowController {
+    event_loop: EventLoopProxy<DummyEvent>,
 }
 
 #[cfg(target_os = "windows")]
@@ -105,10 +106,10 @@ fn create_event_loop(any_thread: bool) -> winit::event_loop::EventLoop<DummyEven
 }
 
 #[cfg(target_os = "linux")]
-fn create_event_loop(any_thread: bool) -> winit::event_loop::EventLoop<DummyEvent> {
+fn create_event_loop(any_thread: bool) -> EventLoop<DummyEvent> {
     use winit::platform::wayland::EventLoopBuilderExtWayland;
 
-    winit::event_loop::EventLoop::<DummyEvent>::with_user_event()
+    EventLoop::<DummyEvent>::with_user_event()
         .with_any_thread(any_thread)
         .build()
         .unwrap()
@@ -124,7 +125,26 @@ fn create_event_loop(any_thread: bool) -> winit::event_loop::EventLoop<DummyEven
         .unwrap()
 }
 
-static EVENT_LOOP: LazyLock<winit::event_loop::EventLoopProxy<DummyEvent>> = LazyLock::new(|| {
+static EVENT_LOOP: OnceLock<EventLoopProxy<DummyEvent>> = OnceLock::new();
+
+#[savvy]
+fn run_event_loop_on_main_thread() -> savvy::Result<()> {
+    let event_loop = create_event_loop(false);
+    event_loop.set_control_flow(winit::event_loop::ControlFlow::Wait);
+    let mut app = App::default();
+
+    let proxy = event_loop.create_proxy();
+    EVENT_LOOP
+        .set(proxy)
+        .map_err(|_| savvy::Error::new("Failed to set EVENT_LOOP"))?;
+    event_loop.run_app(&mut app).unwrap();
+
+    // probably never reach here
+    Ok(())
+}
+
+#[savvy]
+fn run_event_loop_on_spawned_thread() -> savvy::Result<()> {
     // Note: it's possible to create and send more than the proxy. For example,
     // we can probably send Window. However, probably it's better to let the App
     // cotnrol the window.
@@ -140,22 +160,32 @@ static EVENT_LOOP: LazyLock<winit::event_loop::EventLoopProxy<DummyEvent>> = Laz
         event_loop.run_app(&mut app).unwrap();
     });
 
-    ch_recv.recv().unwrap()
-});
+    let proxy = ch_recv.recv().unwrap();
+    EVENT_LOOP
+        .set(proxy)
+        .map_err(|_| "Failed to set EVENT_LOOP".into())
+}
 
 #[savvy]
-impl AppController {
-    fn new(title: &str) -> savvy::Result<Self> {
-        let event_loop = EVENT_LOOP.clone();
-        event_loop
+impl WindowController {
+    fn new() -> savvy::Result<Self> {
+        let event_loop = match EVENT_LOOP.get() {
+            Some(event_loop) => event_loop.clone(),
+            None => return Err("EVENT_LOOP is not initialized yet".into()),
+        };
+        Ok(Self { event_loop })
+    }
+
+    fn open_window(&mut self, title: &str) -> savvy::Result<()> {
+        self.event_loop
             .send_event(DummyEvent::NewWindow {
                 title: title.to_string(),
             })
             .unwrap();
-        Ok(Self { event_loop })
+        Ok(())
     }
 
-    fn close(&mut self) -> savvy::Result<()> {
+    fn close_window(&mut self) -> savvy::Result<()> {
         self.event_loop.send_event(DummyEvent::CloseWindow).unwrap();
         Ok(())
     }
