@@ -24,14 +24,65 @@ NULL
 }
 
 
-`run_event_loop_on_main_thread` <- function() {
-  invisible(.Call(savvy_run_event_loop_on_main_thread__impl))
+`create_event_loop_on_main_thread` <- function() {
+  .savvy_wrap_MainEventLoop(.Call(savvy_create_event_loop_on_main_thread__impl))
+}
+
+
+`run_event_loop_on_main_thread` <- function(`main_event_loop`) {
+  `main_event_loop` <- .savvy_extract_ptr(`main_event_loop`, "MainEventLoop")
+  invisible(.Call(savvy_run_event_loop_on_main_thread__impl, `main_event_loop`))
 }
 
 
 `run_event_loop_on_spawned_thread` <- function() {
   invisible(.Call(savvy_run_event_loop_on_spawned_thread__impl))
 }
+
+### wrapper functions for MainEventLoop
+
+
+`.savvy_wrap_MainEventLoop` <- function(ptr) {
+  e <- new.env(parent = emptyenv())
+  e$.ptr <- ptr
+
+
+  class(e) <- "MainEventLoop"
+  e
+}
+
+#' @export
+`$<-.MainEventLoop` <- function(x, name, value) stop("MainEventLoop cannot be modified", call. = FALSE)
+
+#' @export
+`[[<-.MainEventLoop` <- function(x, i, value) stop("MainEventLoop cannot be modified", call. = FALSE)
+
+
+
+`MainEventLoop` <- new.env(parent = emptyenv())
+
+#' @export
+`$<-.MainEventLoop` <- function(x, name, value) stop("MainEventLoop cannot be modified", call. = FALSE)
+
+#' @export
+`[[<-.MainEventLoop` <- function(x, i, value) stop("MainEventLoop cannot be modified", call. = FALSE)
+
+### associated functions for MainEventLoop
+
+
+
+class(`MainEventLoop`) <- "MainEventLoop__bundle"
+
+#' @export
+`print.MainEventLoop__bundle` <- function(x, ...) {
+  cat('MainEventLoop')
+}
+
+#' @export
+`$<-.MainEventLoop__bundle` <- function(x, name, value) stop("MainEventLoop cannot be modified", call. = FALSE)
+
+#' @export
+`[[<-.MainEventLoop__bundle` <- function(x, i, value) stop("MainEventLoop cannot be modified", call. = FALSE)
 
 ### wrapper functions for WindowController
 

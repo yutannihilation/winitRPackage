@@ -1,5 +1,9 @@
-SEXP savvy_run_event_loop_on_main_thread__ffi(void);
+SEXP savvy_create_event_loop_on_main_thread__ffi(void);
+SEXP savvy_run_event_loop_on_main_thread__ffi(SEXP c_arg__main_event_loop);
 SEXP savvy_run_event_loop_on_spawned_thread__ffi(void);
+
+// methods and associated functions for MainEventLoop
+
 
 // methods and associated functions for WindowController
 SEXP savvy_WindowController_new__ffi(void);

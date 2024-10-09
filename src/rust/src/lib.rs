@@ -128,15 +128,27 @@ fn create_event_loop(any_thread: bool) -> winit::event_loop::EventLoop<DummyEven
 static EVENT_LOOP: OnceLock<EventLoopProxy<DummyEvent>> = OnceLock::new();
 
 #[savvy]
-fn run_event_loop_on_main_thread() -> savvy::Result<()> {
-    let event_loop = create_event_loop(false);
+struct MainEventLoop(EventLoop<DummyEvent>);
+
+#[savvy]
+fn create_event_loop_on_main_thread() -> savvy::Result<MainEventLoop> {
+    Ok(MainEventLoop(create_event_loop(false)))
+}
+
+#[savvy]
+fn run_event_loop_on_main_thread(main_event_loop: MainEventLoop) -> savvy::Result<()> {
+    savvy::r_eprintln!("enter function");
+    let event_loop = main_event_loop.0;
     event_loop.set_control_flow(winit::event_loop::ControlFlow::Wait);
     let mut app = App::default();
 
+    savvy::r_eprintln!("creating proxy");
     let proxy = event_loop.create_proxy();
+    savvy::r_eprintln!("setting proxy");
     EVENT_LOOP
         .set(proxy)
         .map_err(|_| savvy::Error::new("Failed to set EVENT_LOOP"))?;
+    savvy::r_eprintln!("proxy set");
     event_loop.run_app(&mut app).unwrap();
 
     // probably never reach here
