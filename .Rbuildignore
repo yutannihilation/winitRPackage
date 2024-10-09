@@ -1,4 +1,4 @@
-^winitPumpRPackage\.Rproj$
+^winitRpackage\.Rproj$
 ^\.Rproj\.user$
 
 ^src/rust/.cargo$

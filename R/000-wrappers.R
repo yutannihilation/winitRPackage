@@ -5,7 +5,7 @@
 #   first, which allows users to override the functions defined here (e.g., a
 #   print() method for an enum).
 
-#' @useDynLib winitPumpRPackage, .registration = TRUE
+#' @useDynLib winitRpackage, .registration = TRUE
 #' @keywords internal
 NULL
 

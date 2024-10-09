@@ -1604,7 +1604,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "winit_pump_r_package"
+name = "winit_r_package"
 version = "0.1.0"
 dependencies = [
  "savvy",

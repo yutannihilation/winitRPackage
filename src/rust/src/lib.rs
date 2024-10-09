@@ -4,7 +4,6 @@ use savvy::savvy;
 use winit::{
     application::ApplicationHandler,
     event::{self, WindowEvent},
-    platform::pump_events::EventLoopExtPumpEvents,
     window::WindowAttributes,
 };
 
