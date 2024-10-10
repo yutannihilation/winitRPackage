@@ -56,8 +56,8 @@ jobs:
 
     - name: release
       run: |
-        for f in ./artifacts/*; do
-          tar -cvzf "${f}.tar.gz" "${f}"
+        for f in $(ls ./artifacts/); do
+          tar -czf "${f}.tar.gz" ./artifacts/${f}/*
         done
-        
-        gh release create v0.0.0 ./artifacts/*.tar.gz
+
+        gh release create v0.0.0-1 ./server-*.tar.gz
