@@ -34,11 +34,13 @@ fi
 
 if [ "$(uname)" = "Darwin" ]; then
   FEATURES="--features no_winit"
-  MACOS_LIBS="-lobjc -fobjc-exceptions -fobjc-arc -fobjc-arc-exceptions"
+  MACOS_LIBS="-lobjc"
+  MACOS_CFLAGS="-fobjc-exceptions -fobjc-arc -fobjc-arc-exceptions"
 fi
 
 sed \
   -e "s/@TARGET@/${TARGET}/" \
   -e "s/@FEATURES@/${FEATURES}/" \
   -e "s/@MACOS_LIBS@/${MACOS_LIBS}/" \
+  -e "s/@MACOS_CFLAGS@/${MACOS_CFLAGS}/" \
   src/Makevars.in > src/Makevars
