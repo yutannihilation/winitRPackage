@@ -10,7 +10,15 @@ The main difficulty is that winit requires to be executed on the main thread, wh
 
 ```r
 x <- SpawnedWindowController$new()
+
+# create a new window titled "foo"
 x$open_window("foo")
+
+# get the window size
+x$get_window_size()
+#> [1] 800 600
+
+# close the window
 x$close_window()
 ```
 
@@ -18,6 +26,14 @@ x$close_window()
 
 ```r
 x <- ExternalWindowController$new()
+
+# create a new window titled "foo"
 x$open_window("foo")
+
+# get the window size
+x$get_window_size()
+#> [1] 800 600
+
+# close the window
 x$close_window()
 ```

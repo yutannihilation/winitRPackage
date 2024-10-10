@@ -21,7 +21,7 @@ pub enum DummyEvent {
 #[derive(Serialize, Deserialize, Debug)]
 pub enum DummyResponse {
     Connect { server_name: String },
-    WindowSize { width: f32, height: f32 },
+    WindowSize { width: f64, height: f64 },
 }
 
 pub trait AppResponseRelay {
@@ -103,8 +103,7 @@ impl<T: AppResponseRelay> ApplicationHandler<DummyEvent> for App<T> {
                     },
                 };
 
-                // TODO
-                // self.respond(resp);
+                self.tx.respond(resp);
             }
             DummyEvent::CloseWindow => {
                 self.close_window();
@@ -169,10 +168,20 @@ pub fn create_event_loop(any_thread: bool) -> EventLoop<DummyEvent> {
 pub trait WindowController {
     fn send_event(&self, event: DummyEvent) -> savvy::Result<()>;
 
+    fn recv_response(&self) -> savvy::Result<DummyResponse>;
+
     fn open_window_impl(&mut self, title: &str) -> savvy::Result<()> {
         self.send_event(DummyEvent::NewWindow {
             title: title.to_string(),
         })
+    }
+
+    fn get_window_size_impl(&self) -> savvy::Result<Vec<f64>> {
+        self.send_event(DummyEvent::GetWindowSize)?;
+        match self.recv_response()? {
+            DummyResponse::WindowSize { width, height } => Ok(vec![width, height]),
+            r => Err(format!("Unexpected response: {r:?}").into()),
+        }
     }
 
     fn close_window_impl(&mut self) -> savvy::Result<()> {

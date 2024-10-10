@@ -32,6 +32,12 @@ NULL
   }
 }
 
+`ExternalWindowController_get_window_size` <- function(self) {
+  function() {
+    .Call(savvy_ExternalWindowController_get_window_size__impl, `self`)
+  }
+}
+
 `ExternalWindowController_close_window` <- function(self) {
   function() {
     invisible(.Call(savvy_ExternalWindowController_close_window__impl, `self`))
@@ -42,6 +48,7 @@ NULL
   e <- new.env(parent = emptyenv())
   e$.ptr <- ptr
   e$`open_window` <- `ExternalWindowController_open_window`(ptr)
+  e$`get_window_size` <- `ExternalWindowController_get_window_size`(ptr)
   e$`close_window` <- `ExternalWindowController_close_window`(ptr)
 
   class(e) <- "ExternalWindowController"
@@ -70,6 +77,10 @@ NULL
   .savvy_wrap_ExternalWindowController(.Call(savvy_ExternalWindowController_new__impl))
 }
 
+`ExternalWindowController`$`new_debug` <- function() {
+  .savvy_wrap_ExternalWindowController(.Call(savvy_ExternalWindowController_new_debug__impl))
+}
+
 
 class(`ExternalWindowController`) <- "ExternalWindowController__bundle"
 
@@ -92,6 +103,12 @@ class(`ExternalWindowController`) <- "ExternalWindowController__bundle"
   }
 }
 
+`SpawnedWindowController_get_window_size` <- function(self) {
+  function() {
+    .Call(savvy_SpawnedWindowController_get_window_size__impl, `self`)
+  }
+}
+
 `SpawnedWindowController_close_window` <- function(self) {
   function() {
     invisible(.Call(savvy_SpawnedWindowController_close_window__impl, `self`))
@@ -102,6 +119,7 @@ class(`ExternalWindowController`) <- "ExternalWindowController__bundle"
   e <- new.env(parent = emptyenv())
   e$.ptr <- ptr
   e$`open_window` <- `SpawnedWindowController_open_window`(ptr)
+  e$`get_window_size` <- `SpawnedWindowController_get_window_size`(ptr)
   e$`close_window` <- `SpawnedWindowController_close_window`(ptr)
 
   class(e) <- "SpawnedWindowController"

@@ -3,9 +3,7 @@ use std::sync::LazyLock;
 use savvy::savvy;
 use winit::event_loop::EventLoopProxy;
 
-use crate::{
-    create_event_loop, App, AppResponseRelay, DummyEvent, DummyResponse, WindowController,
-};
+use crate::{create_event_loop, App, DummyEvent, DummyResponse, WindowController};
 
 #[derive(Debug)]
 struct EventLoopWithRx {
@@ -45,6 +43,15 @@ impl WindowController for SpawnedWindowController {
             .send_event(event)
             .map_err(|e| format!("{e}").into())
     }
+
+    fn recv_response(&self) -> savvy::Result<DummyResponse> {
+        EVENT_LOOP
+            .rx
+            .lock()
+            .unwrap()
+            .recv()
+            .map_err(|e| format!("{e}").into())
+    }
 }
 
 #[savvy]
@@ -55,6 +62,10 @@ impl SpawnedWindowController {
 
     fn open_window(&mut self, title: &str) -> savvy::Result<()> {
         self.open_window_impl(title)
+    }
+
+    fn get_window_size(&self) -> savvy::Result<savvy::Sexp> {
+        self.get_window_size_impl()?.try_into()
     }
 
     fn close_window(&mut self) -> savvy::Result<()> {

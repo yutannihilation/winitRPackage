@@ -40,8 +40,18 @@ SEXP savvy_ExternalWindowController_new__impl(void) {
     return handle_result(res);
 }
 
+SEXP savvy_ExternalWindowController_new_debug__impl(void) {
+    SEXP res = savvy_ExternalWindowController_new_debug__ffi();
+    return handle_result(res);
+}
+
 SEXP savvy_ExternalWindowController_open_window__impl(SEXP self__, SEXP c_arg__title) {
     SEXP res = savvy_ExternalWindowController_open_window__ffi(self__, c_arg__title);
+    return handle_result(res);
+}
+
+SEXP savvy_ExternalWindowController_get_window_size__impl(SEXP self__) {
+    SEXP res = savvy_ExternalWindowController_get_window_size__ffi(self__);
     return handle_result(res);
 }
 
@@ -60,6 +70,11 @@ SEXP savvy_SpawnedWindowController_open_window__impl(SEXP self__, SEXP c_arg__ti
     return handle_result(res);
 }
 
+SEXP savvy_SpawnedWindowController_get_window_size__impl(SEXP self__) {
+    SEXP res = savvy_SpawnedWindowController_get_window_size__ffi(self__);
+    return handle_result(res);
+}
+
 SEXP savvy_SpawnedWindowController_close_window__impl(SEXP self__) {
     SEXP res = savvy_SpawnedWindowController_close_window__ffi(self__);
     return handle_result(res);
@@ -69,10 +84,13 @@ SEXP savvy_SpawnedWindowController_close_window__impl(SEXP self__) {
 static const R_CallMethodDef CallEntries[] = {
 
     {"savvy_ExternalWindowController_new__impl", (DL_FUNC) &savvy_ExternalWindowController_new__impl, 0},
+    {"savvy_ExternalWindowController_new_debug__impl", (DL_FUNC) &savvy_ExternalWindowController_new_debug__impl, 0},
     {"savvy_ExternalWindowController_open_window__impl", (DL_FUNC) &savvy_ExternalWindowController_open_window__impl, 2},
+    {"savvy_ExternalWindowController_get_window_size__impl", (DL_FUNC) &savvy_ExternalWindowController_get_window_size__impl, 1},
     {"savvy_ExternalWindowController_close_window__impl", (DL_FUNC) &savvy_ExternalWindowController_close_window__impl, 1},
     {"savvy_SpawnedWindowController_new__impl", (DL_FUNC) &savvy_SpawnedWindowController_new__impl, 0},
     {"savvy_SpawnedWindowController_open_window__impl", (DL_FUNC) &savvy_SpawnedWindowController_open_window__impl, 2},
+    {"savvy_SpawnedWindowController_get_window_size__impl", (DL_FUNC) &savvy_SpawnedWindowController_get_window_size__impl, 1},
     {"savvy_SpawnedWindowController_close_window__impl", (DL_FUNC) &savvy_SpawnedWindowController_close_window__impl, 1},
     {NULL, NULL, 0}
 };
