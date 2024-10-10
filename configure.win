@@ -21,9 +21,4 @@ RUSTC_VERSION="$(rustc --version || true)"
 echo "using Rust package manager: '${CARGO_VERSION}'"
 echo "using Rust compiler: '${RUSTC_VERSION}'"
 
-mkdir -p inst/
-cargo build --release --manifest-path ./src/rust/Cargo.toml --bin winit_r_package_server
-rm -f ./inst/winit_r_package_server.exe
-cp ./src/rust/target/release/winit_r_package_server.exe ./inst/
-
 sed -e "s/@TARGET@/x86_64-pc-windows-gnu/" src/Makevars.win.in > src/Makevars.win
