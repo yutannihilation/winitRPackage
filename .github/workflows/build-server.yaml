@@ -58,7 +58,11 @@ jobs:
       run: |
         mkdir "${{ runner.temp }}/dist/"
         for d in $(ls ./artifacts/); do
-          tar -C "./artifacts/${d}" -czf "${{ runner.temp }}/dist/${d}.tar.gz" ./artifacts/${d}/winit_r_package_server*
+          echo "./artifacts/${d}"
+          
+          cd "./artifacts/${d}"
+          tar -czf "${{ runner.temp }}/dist/${d}.tar.gz" ./winit_r_package_server*
+          cd -
         done
 
         gh release create v0.0.0-1 ${{ runner.temp }}/dist/*
