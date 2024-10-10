@@ -23,9 +23,6 @@ jobs:
           - {os: windows-latest}
           - {os: macOS-latest  }
           - {os: ubuntu-latest }
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      R_KEEP_PKG_SOURCE: yes
 
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +34,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: server-${{ matrix.config.os }}
+          name: server-${{ runner.os }}-${{ runner.arch }}
           path: |
             ./src/rust/target/release/winit_r_package_server
             ./src/rust/target/release/winit_r_package_server.exe
@@ -45,6 +42,8 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
     - uses: actions/checkout@v4
 
@@ -53,7 +52,7 @@ jobs:
         path: artifacts/
         pattern: server-*
 
-    - name: ls
+    - name: release
       run: |
         ls artifacts/
         gh release create v0.0.0 ./artifacts/*
