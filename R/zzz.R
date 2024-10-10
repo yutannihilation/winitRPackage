@@ -9,7 +9,7 @@ server_path <- function() {
     "winit_r_package_server"
   }
 
-  file.path(savvy_cache_dir(), bin)
+  file.path(pkg_cache_dir(), bin)
 
   stop("TODO")
 }
