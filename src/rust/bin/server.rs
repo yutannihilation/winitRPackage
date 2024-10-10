@@ -1,15 +1,15 @@
 use ipc_channel::ipc::{IpcOneShotServer, IpcSender};
-use winit_r_package::{create_event_loop, App, DummyEvent};
+use winit_r_package::{create_event_loop, App, DummyEvent, DummyResponse};
 
 fn main() {
     let tx_server_name = std::env::args().nth(1).unwrap();
 
     // First, connect from server to client
-    let tx: IpcSender<DummyEvent> = IpcSender::connect(tx_server_name).unwrap();
+    let tx: IpcSender<DummyResponse> = IpcSender::connect(tx_server_name).unwrap();
     // Then, create a connection of the opposite direction
     let (rx_server, rx_server_name) = IpcOneShotServer::<DummyEvent>::new().unwrap();
     // Tell the server name to the client
-    tx.send(DummyEvent::Connect {
+    tx.send(DummyResponse::Connect {
         server_name: rx_server_name,
     })
     .unwrap();

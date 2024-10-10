@@ -8,14 +8,10 @@ use winit::{
     window::WindowAttributes,
 };
 
-#[cfg(windows)]
-use winit::platform::windows::EventLoopBuilderExtWindows;
-
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum DummyEvent {
-    Connect { server_name: String },
     NewWindow { title: String },
     GetWindowSize,
     CloseWindow,
@@ -24,16 +20,35 @@ pub enum DummyEvent {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum DummyResponse {
+    Connect { server_name: String },
     WindowSize { width: f32, height: f32 },
 }
 
+pub trait AppResponseRelay {
+    fn respond(&self, response: DummyResponse);
+}
+
+// for spawned_window_controller
+impl AppResponseRelay for std::sync::mpsc::Sender<DummyResponse> {
+    fn respond(&self, response: DummyResponse) {
+        self.send(response).unwrap();
+    }
+}
+
+// For external_window_controller
+impl AppResponseRelay for ipc_channel::ipc::IpcSender<DummyResponse> {
+    fn respond(&self, response: DummyResponse) {
+        self.send(response).unwrap();
+    }
+}
+
 #[derive(Default)]
-pub struct App<T> {
+pub struct App<T: AppResponseRelay> {
     pub window: Option<winit::window::Window>,
     pub tx: T,
 }
 
-impl<T> App<T> {
+impl<T: AppResponseRelay> App<T> {
     fn close_window(&mut self) {
         if let Some(window) = self.window.take() {
             drop(window)
@@ -41,19 +56,7 @@ impl<T> App<T> {
     }
 }
 
-impl App<std::sync::mpsc::Sender<DummyResponse>> {
-    fn respond(&self, response: DummyResponse) {
-        self.tx.send(response).unwrap();
-    }
-}
-
-impl App<ipc_channel::ipc::IpcSender<DummyResponse>> {
-    fn respond(&self, response: DummyResponse) {
-        self.tx.send(response).unwrap();
-    }
-}
-
-impl<T> ApplicationHandler<DummyEvent> for App<T> {
+impl<T: AppResponseRelay> ApplicationHandler<DummyEvent> for App<T> {
     fn resumed(&mut self, _event_loop: &ActiveEventLoop) {}
 
     fn window_event(
@@ -119,7 +122,7 @@ fn create_window_attributes(title: String) -> WindowAttributes {
 #[cfg(target_os = "windows")]
 fn add_platform_specific_attributes(attrs: WindowAttributes) -> WindowAttributes {
     use winit::platform::windows::WindowAttributesExtWindows;
-    attrs.with_corner_preference(platform::windows::CornerPreference::DoNotRound)
+    attrs.with_corner_preference(winit::platform::windows::CornerPreference::DoNotRound)
 }
 
 #[cfg(target_os = "linux")]
@@ -133,8 +136,8 @@ fn add_platform_specific_attributes(attrs: WindowAttributes) -> WindowAttributes
 }
 
 #[cfg(target_os = "windows")]
-fn create_event_loop(any_thread: bool) -> winit::event_loop::EventLoop<DummyEvent> {
-    use winit::platform::windows::EventLoopBuilderExtWayland;
+pub fn create_event_loop(any_thread: bool) -> EventLoop<DummyEvent> {
+    use winit::platform::windows::EventLoopBuilderExtWindows;
 
     winit::event_loop::EventLoop::<DummyEvent>::with_user_event()
         .with_any_thread(any_thread)
@@ -153,13 +156,11 @@ pub fn create_event_loop(any_thread: bool) -> EventLoop<DummyEvent> {
 }
 
 #[cfg(target_os = "macos")]
-fn create_event_loop(any_thread: bool) -> winit::event_loop::EventLoop<DummyEvent> {
+pub fn create_event_loop(any_thread: bool) -> EventLoop<DummyEvent> {
     if any_thread {
         panic!("Not supported!");
     }
-    winit::event_loop::EventLoop::<DummyEvent>::with_user_event()
-        .build()
-        .unwrap()
+    EventLoop::<DummyEvent>::with_user_event().build().unwrap()
 }
 
 // Note: why does these default methods have "_impl" suffix? This is because

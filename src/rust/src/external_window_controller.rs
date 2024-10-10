@@ -1,13 +1,13 @@
 use ipc_channel::ipc::{IpcOneShotServer, IpcReceiver, IpcSender};
 use savvy::savvy;
 
-use crate::{DummyEvent, WindowController};
+use crate::{DummyEvent, DummyResponse, WindowController};
 
 #[savvy]
 struct ExternalWindowController {
     process: std::process::Child,
     tx: IpcSender<DummyEvent>,
-    rx: IpcReceiver<DummyEvent>,
+    rx: IpcReceiver<DummyResponse>,
 }
 
 impl Drop for ExternalWindowController {
@@ -28,10 +28,14 @@ impl WindowController for ExternalWindowController {
 #[savvy]
 impl ExternalWindowController {
     fn new() -> savvy::Result<Self> {
-        let (rx_server, rx_server_name) = IpcOneShotServer::<DummyEvent>::new().unwrap();
+        let (rx_server, rx_server_name) = IpcOneShotServer::<DummyResponse>::new().unwrap();
 
         // spawn a server process
-        let server_bin = "./src/rust/target/debug/server";
+        let server_bin = if cfg!(windows) {
+            "./src/rust/target/debug/server.exe"
+        } else {
+            "./src/rust/target/debug/server"
+        };
         let res = std::process::Command::new(server_bin)
             .arg(rx_server_name)
             // .stdout(std::process::Stdio::piped())
@@ -47,7 +51,7 @@ impl ExternalWindowController {
 
         // establish connections of both direction
         let (tx, rx) = match rx_server.accept() {
-            Ok((rx, DummyEvent::Connect { server_name })) => {
+            Ok((rx, DummyResponse::Connect { server_name })) => {
                 savvy::r_eprint!("Connecting to {server_name}...");
                 let tx: IpcSender<DummyEvent> = IpcSender::connect(server_name).unwrap();
                 tx.send(DummyEvent::ConnectionReady).unwrap();
