@@ -44,13 +44,6 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
-      - name: debug
-        run: |
-          which clang
-          clang --version
-          Rscript -e "Sys.which('clang')"
-          Rscript -e "system2('clang', args = '--version')"
-
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-results: 'never'
