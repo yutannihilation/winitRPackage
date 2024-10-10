@@ -21,7 +21,9 @@ $(STATLIB):
 	# therefore is only used if cargo is absent from the user's PATH.
 	export PATH="$(PATH):$(HOME)/.cargo/bin" && \
 	  if [ "$(TARGET)" != "wasm32-unknown-emscripten" ]; then \
-	    cargo build $(CARGO_BUILD_ARGS); \
+	    export CC="$(CC)" && \
+	    export CFLAGS="$(CFLAGS)" && \
+		cargo build $(CARGO_BUILD_ARGS); \
 	  else \
 	    export CC="$(CC)" && \
 	    export CFLAGS="$(CFLAGS)" && \
