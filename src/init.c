@@ -34,46 +34,50 @@ SEXP handle_result(SEXP res_) {
     return (SEXP)res;
 }
 
-SEXP savvy_create_event_loop_on_main_thread__impl(void) {
-    SEXP res = savvy_create_event_loop_on_main_thread__ffi();
-    return handle_result(res);
-}
-
-SEXP savvy_run_event_loop_on_main_thread__impl(SEXP c_arg__main_event_loop) {
-    SEXP res = savvy_run_event_loop_on_main_thread__ffi(c_arg__main_event_loop);
-    return handle_result(res);
-}
-
 SEXP savvy_run_event_loop_on_spawned_thread__impl(void) {
     SEXP res = savvy_run_event_loop_on_spawned_thread__ffi();
     return handle_result(res);
 }
 
-
-SEXP savvy_WindowController_new__impl(void) {
-    SEXP res = savvy_WindowController_new__ffi();
+SEXP savvy_ExternalWindowController_new__impl(void) {
+    SEXP res = savvy_ExternalWindowController_new__ffi();
     return handle_result(res);
 }
 
-SEXP savvy_WindowController_open_window__impl(SEXP self__, SEXP c_arg__title) {
-    SEXP res = savvy_WindowController_open_window__ffi(self__, c_arg__title);
+SEXP savvy_ExternalWindowController_open_window__impl(SEXP self__, SEXP c_arg__title) {
+    SEXP res = savvy_ExternalWindowController_open_window__ffi(self__, c_arg__title);
     return handle_result(res);
 }
 
-SEXP savvy_WindowController_close_window__impl(SEXP self__) {
-    SEXP res = savvy_WindowController_close_window__ffi(self__);
+SEXP savvy_ExternalWindowController_close_window__impl(SEXP self__) {
+    SEXP res = savvy_ExternalWindowController_close_window__ffi(self__);
+    return handle_result(res);
+}
+
+SEXP savvy_SpawnedWindowController_new__impl(void) {
+    SEXP res = savvy_SpawnedWindowController_new__ffi();
+    return handle_result(res);
+}
+
+SEXP savvy_SpawnedWindowController_open_window__impl(SEXP self__, SEXP c_arg__title) {
+    SEXP res = savvy_SpawnedWindowController_open_window__ffi(self__, c_arg__title);
+    return handle_result(res);
+}
+
+SEXP savvy_SpawnedWindowController_close_window__impl(SEXP self__) {
+    SEXP res = savvy_SpawnedWindowController_close_window__ffi(self__);
     return handle_result(res);
 }
 
 
 static const R_CallMethodDef CallEntries[] = {
-    {"savvy_create_event_loop_on_main_thread__impl", (DL_FUNC) &savvy_create_event_loop_on_main_thread__impl, 0},
-    {"savvy_run_event_loop_on_main_thread__impl", (DL_FUNC) &savvy_run_event_loop_on_main_thread__impl, 1},
     {"savvy_run_event_loop_on_spawned_thread__impl", (DL_FUNC) &savvy_run_event_loop_on_spawned_thread__impl, 0},
-
-    {"savvy_WindowController_new__impl", (DL_FUNC) &savvy_WindowController_new__impl, 0},
-    {"savvy_WindowController_open_window__impl", (DL_FUNC) &savvy_WindowController_open_window__impl, 2},
-    {"savvy_WindowController_close_window__impl", (DL_FUNC) &savvy_WindowController_close_window__impl, 1},
+    {"savvy_ExternalWindowController_new__impl", (DL_FUNC) &savvy_ExternalWindowController_new__impl, 0},
+    {"savvy_ExternalWindowController_open_window__impl", (DL_FUNC) &savvy_ExternalWindowController_open_window__impl, 2},
+    {"savvy_ExternalWindowController_close_window__impl", (DL_FUNC) &savvy_ExternalWindowController_close_window__impl, 1},
+    {"savvy_SpawnedWindowController_new__impl", (DL_FUNC) &savvy_SpawnedWindowController_new__impl, 0},
+    {"savvy_SpawnedWindowController_open_window__impl", (DL_FUNC) &savvy_SpawnedWindowController_open_window__impl, 2},
+    {"savvy_SpawnedWindowController_close_window__impl", (DL_FUNC) &savvy_SpawnedWindowController_close_window__impl, 1},
     {NULL, NULL, 0}
 };
 

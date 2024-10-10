@@ -8,7 +8,7 @@ crate-type = ["staticlib", "lib"]
 
 [[bin]]
 name = "server"
-path = "src/server.rs"
+path = "bin/server.rs"
 
 [dependencies]
 ipc-channel = "0.18.3"

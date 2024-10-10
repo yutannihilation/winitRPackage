@@ -1,5 +1,6 @@
-use std::sync::OnceLock;
+use std::{process::Stdio, sync::OnceLock};
 
+use ipc_channel::ipc::{IpcOneShotServer, IpcReceiver, IpcSender};
 use savvy::savvy;
 use winit::{
     application::ApplicationHandler,
@@ -18,6 +19,7 @@ pub enum DummyEvent {
     Connect { server_name: String },
     NewWindow { title: String },
     CloseWindow,
+    ConnectionReady, // This is not an event for Window management. Only used for server-client.
 }
 
 #[derive(Default)]
@@ -95,7 +97,7 @@ fn add_platform_specific_attributes(attrs: WindowAttributes) -> WindowAttributes
 }
 
 #[savvy]
-struct WindowController {
+struct SpawnedWindowController {
     event_loop: EventLoopProxy<DummyEvent>,
 }
 
@@ -132,31 +134,6 @@ fn create_event_loop(any_thread: bool) -> winit::event_loop::EventLoop<DummyEven
 static EVENT_LOOP: OnceLock<EventLoopProxy<DummyEvent>> = OnceLock::new();
 
 #[savvy]
-struct MainEventLoop(EventLoop<DummyEvent>);
-
-#[savvy]
-fn create_event_loop_on_main_thread() -> savvy::Result<MainEventLoop> {
-    let event_loop = create_event_loop(false);
-    event_loop.set_control_flow(winit::event_loop::ControlFlow::Wait);
-    let proxy = event_loop.create_proxy();
-    EVENT_LOOP
-        .set(proxy)
-        .map_err(|_| savvy::Error::new("Failed to set EVENT_LOOP"))?;
-
-    Ok(MainEventLoop(event_loop))
-}
-
-#[savvy]
-fn run_event_loop_on_main_thread(main_event_loop: MainEventLoop) -> savvy::Result<()> {
-    let event_loop = main_event_loop.0;
-    let mut app = App::default();
-    event_loop.run_app(&mut app).unwrap();
-
-    // probably never reach here
-    Ok(())
-}
-
-#[savvy]
 fn run_event_loop_on_spawned_thread() -> savvy::Result<()> {
     // Note: it's possible to create and send more than the proxy. For example,
     // we can probably send Window. However, probably it's better to let the App
@@ -180,7 +157,78 @@ fn run_event_loop_on_spawned_thread() -> savvy::Result<()> {
 }
 
 #[savvy]
-impl WindowController {
+struct ExternalWindowController {
+    process: std::process::Child,
+    tx: IpcSender<DummyEvent>,
+    rx: IpcReceiver<DummyEvent>,
+}
+
+impl Drop for ExternalWindowController {
+    fn drop(&mut self) {
+        self.process
+            // Note: if the process already exited, kill() returns Ok(())
+            .kill()
+            .unwrap_or_else(|e| panic!("Failed to kill the process {e}"))
+    }
+}
+
+#[savvy]
+impl ExternalWindowController {
+    fn new() -> savvy::Result<Self> {
+        let (rx_server, rx_server_name) = IpcOneShotServer::<DummyEvent>::new().unwrap();
+
+        // spawn a server process
+        let server_bin = "./src/rust/target/debug/server";
+        let res = std::process::Command::new(server_bin)
+            .arg(rx_server_name)
+            .stdout(Stdio::piped())
+            .spawn();
+        let server_process = match res {
+            Ok(c) => c,
+            Err(e) => {
+                let msg = format!("failed to spawn the process: {e}");
+                return Err(savvy::Error::new(&msg));
+            }
+        };
+        savvy::r_eprintln!("Server runs at PID {}", server_process.id());
+
+        // establish connections of both direction
+        let (tx, rx) = match rx_server.accept() {
+            Ok((rx, DummyEvent::Connect { server_name })) => {
+                savvy::r_eprint!("Connecting to {server_name}...");
+                let tx: IpcSender<DummyEvent> = IpcSender::connect(server_name).unwrap();
+                tx.send(DummyEvent::ConnectionReady).unwrap();
+                (tx, rx)
+            }
+            Ok((_, data)) => panic!("got unexpected data: {data:?}"),
+            Err(e) => panic!("failed to accept connection: {e}"),
+        };
+        savvy::r_eprintln!("connected!");
+
+        Ok(Self {
+            process: server_process,
+            tx,
+            rx,
+        })
+    }
+
+    fn open_window(&mut self, title: &str) -> savvy::Result<()> {
+        self.tx
+            .send(DummyEvent::NewWindow {
+                title: title.to_string(),
+            })
+            .unwrap();
+        Ok(())
+    }
+
+    fn close_window(&mut self) -> savvy::Result<()> {
+        self.tx.send(DummyEvent::CloseWindow).unwrap();
+        Ok(())
+    }
+}
+
+#[savvy]
+impl SpawnedWindowController {
     fn new() -> savvy::Result<Self> {
         let event_loop = match EVENT_LOOP.get() {
             Some(event_loop) => event_loop.clone(),

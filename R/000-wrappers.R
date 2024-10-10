@@ -24,123 +24,127 @@ NULL
 }
 
 
-`create_event_loop_on_main_thread` <- function() {
-  .savvy_wrap_MainEventLoop(.Call(savvy_create_event_loop_on_main_thread__impl))
-}
-
-
-`run_event_loop_on_main_thread` <- function(`main_event_loop`) {
-  `main_event_loop` <- .savvy_extract_ptr(`main_event_loop`, "MainEventLoop")
-  invisible(.Call(savvy_run_event_loop_on_main_thread__impl, `main_event_loop`))
-}
-
-
 `run_event_loop_on_spawned_thread` <- function() {
   invisible(.Call(savvy_run_event_loop_on_spawned_thread__impl))
 }
 
-### wrapper functions for MainEventLoop
+### wrapper functions for ExternalWindowController
 
-
-`.savvy_wrap_MainEventLoop` <- function(ptr) {
-  e <- new.env(parent = emptyenv())
-  e$.ptr <- ptr
-
-
-  class(e) <- "MainEventLoop"
-  e
-}
-
-#' @export
-`$<-.MainEventLoop` <- function(x, name, value) stop("MainEventLoop cannot be modified", call. = FALSE)
-
-#' @export
-`[[<-.MainEventLoop` <- function(x, i, value) stop("MainEventLoop cannot be modified", call. = FALSE)
-
-
-
-`MainEventLoop` <- new.env(parent = emptyenv())
-
-#' @export
-`$<-.MainEventLoop` <- function(x, name, value) stop("MainEventLoop cannot be modified", call. = FALSE)
-
-#' @export
-`[[<-.MainEventLoop` <- function(x, i, value) stop("MainEventLoop cannot be modified", call. = FALSE)
-
-### associated functions for MainEventLoop
-
-
-
-class(`MainEventLoop`) <- "MainEventLoop__bundle"
-
-#' @export
-`print.MainEventLoop__bundle` <- function(x, ...) {
-  cat('MainEventLoop')
-}
-
-#' @export
-`$<-.MainEventLoop__bundle` <- function(x, name, value) stop("MainEventLoop cannot be modified", call. = FALSE)
-
-#' @export
-`[[<-.MainEventLoop__bundle` <- function(x, i, value) stop("MainEventLoop cannot be modified", call. = FALSE)
-
-### wrapper functions for WindowController
-
-`WindowController_open_window` <- function(self) {
+`ExternalWindowController_open_window` <- function(self) {
   function(`title`) {
-    invisible(.Call(savvy_WindowController_open_window__impl, `self`, `title`))
+    invisible(.Call(savvy_ExternalWindowController_open_window__impl, `self`, `title`))
   }
 }
 
-`WindowController_close_window` <- function(self) {
+`ExternalWindowController_close_window` <- function(self) {
   function() {
-    invisible(.Call(savvy_WindowController_close_window__impl, `self`))
+    invisible(.Call(savvy_ExternalWindowController_close_window__impl, `self`))
   }
 }
 
-`.savvy_wrap_WindowController` <- function(ptr) {
+`.savvy_wrap_ExternalWindowController` <- function(ptr) {
   e <- new.env(parent = emptyenv())
   e$.ptr <- ptr
-  e$`open_window` <- `WindowController_open_window`(ptr)
-  e$`close_window` <- `WindowController_close_window`(ptr)
+  e$`open_window` <- `ExternalWindowController_open_window`(ptr)
+  e$`close_window` <- `ExternalWindowController_close_window`(ptr)
 
-  class(e) <- "WindowController"
+  class(e) <- "ExternalWindowController"
   e
 }
 
 #' @export
-`$<-.WindowController` <- function(x, name, value) stop("WindowController cannot be modified", call. = FALSE)
+`$<-.ExternalWindowController` <- function(x, name, value) stop("ExternalWindowController cannot be modified", call. = FALSE)
 
 #' @export
-`[[<-.WindowController` <- function(x, i, value) stop("WindowController cannot be modified", call. = FALSE)
+`[[<-.ExternalWindowController` <- function(x, i, value) stop("ExternalWindowController cannot be modified", call. = FALSE)
 
 
 
-`WindowController` <- new.env(parent = emptyenv())
-
-#' @export
-`$<-.WindowController` <- function(x, name, value) stop("WindowController cannot be modified", call. = FALSE)
+`ExternalWindowController` <- new.env(parent = emptyenv())
 
 #' @export
-`[[<-.WindowController` <- function(x, i, value) stop("WindowController cannot be modified", call. = FALSE)
+`$<-.ExternalWindowController` <- function(x, name, value) stop("ExternalWindowController cannot be modified", call. = FALSE)
 
-### associated functions for WindowController
+#' @export
+`[[<-.ExternalWindowController` <- function(x, i, value) stop("ExternalWindowController cannot be modified", call. = FALSE)
 
-`WindowController`$`new` <- function() {
-  .savvy_wrap_WindowController(.Call(savvy_WindowController_new__impl))
+### associated functions for ExternalWindowController
+
+`ExternalWindowController`$`new` <- function() {
+  .savvy_wrap_ExternalWindowController(.Call(savvy_ExternalWindowController_new__impl))
 }
 
 
-class(`WindowController`) <- "WindowController__bundle"
+class(`ExternalWindowController`) <- "ExternalWindowController__bundle"
 
 #' @export
-`print.WindowController__bundle` <- function(x, ...) {
-  cat('WindowController')
+`print.ExternalWindowController__bundle` <- function(x, ...) {
+  cat('ExternalWindowController')
 }
 
 #' @export
-`$<-.WindowController__bundle` <- function(x, name, value) stop("WindowController cannot be modified", call. = FALSE)
+`$<-.ExternalWindowController__bundle` <- function(x, name, value) stop("ExternalWindowController cannot be modified", call. = FALSE)
 
 #' @export
-`[[<-.WindowController__bundle` <- function(x, i, value) stop("WindowController cannot be modified", call. = FALSE)
+`[[<-.ExternalWindowController__bundle` <- function(x, i, value) stop("ExternalWindowController cannot be modified", call. = FALSE)
+
+### wrapper functions for SpawnedWindowController
+
+`SpawnedWindowController_open_window` <- function(self) {
+  function(`title`) {
+    invisible(.Call(savvy_SpawnedWindowController_open_window__impl, `self`, `title`))
+  }
+}
+
+`SpawnedWindowController_close_window` <- function(self) {
+  function() {
+    invisible(.Call(savvy_SpawnedWindowController_close_window__impl, `self`))
+  }
+}
+
+`.savvy_wrap_SpawnedWindowController` <- function(ptr) {
+  e <- new.env(parent = emptyenv())
+  e$.ptr <- ptr
+  e$`open_window` <- `SpawnedWindowController_open_window`(ptr)
+  e$`close_window` <- `SpawnedWindowController_close_window`(ptr)
+
+  class(e) <- "SpawnedWindowController"
+  e
+}
+
+#' @export
+`$<-.SpawnedWindowController` <- function(x, name, value) stop("SpawnedWindowController cannot be modified", call. = FALSE)
+
+#' @export
+`[[<-.SpawnedWindowController` <- function(x, i, value) stop("SpawnedWindowController cannot be modified", call. = FALSE)
+
+
+
+`SpawnedWindowController` <- new.env(parent = emptyenv())
+
+#' @export
+`$<-.SpawnedWindowController` <- function(x, name, value) stop("SpawnedWindowController cannot be modified", call. = FALSE)
+
+#' @export
+`[[<-.SpawnedWindowController` <- function(x, i, value) stop("SpawnedWindowController cannot be modified", call. = FALSE)
+
+### associated functions for SpawnedWindowController
+
+`SpawnedWindowController`$`new` <- function() {
+  .savvy_wrap_SpawnedWindowController(.Call(savvy_SpawnedWindowController_new__impl))
+}
+
+
+class(`SpawnedWindowController`) <- "SpawnedWindowController__bundle"
+
+#' @export
+`print.SpawnedWindowController__bundle` <- function(x, ...) {
+  cat('SpawnedWindowController')
+}
+
+#' @export
+`$<-.SpawnedWindowController__bundle` <- function(x, name, value) stop("SpawnedWindowController cannot be modified", call. = FALSE)
+
+#' @export
+`[[<-.SpawnedWindowController__bundle` <- function(x, i, value) stop("SpawnedWindowController cannot be modified", call. = FALSE)
 
