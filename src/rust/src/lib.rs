@@ -17,16 +17,23 @@ use serde::{Deserialize, Serialize};
 pub enum DummyEvent {
     Connect { server_name: String },
     NewWindow { title: String },
+    GetWindowSize,
     CloseWindow,
     ConnectionReady, // This is not an event for Window management. Only used for server-client.
 }
 
-#[derive(Default)]
-pub struct App {
-    window: Option<winit::window::Window>,
+#[derive(Serialize, Deserialize, Debug)]
+pub enum DummyResponse {
+    WindowSize { width: f32, height: f32 },
 }
 
-impl App {
+#[derive(Default)]
+pub struct App<T> {
+    pub window: Option<winit::window::Window>,
+    pub tx: T,
+}
+
+impl<T> App<T> {
     fn close_window(&mut self) {
         if let Some(window) = self.window.take() {
             drop(window)
@@ -34,7 +41,19 @@ impl App {
     }
 }
 
-impl ApplicationHandler<DummyEvent> for App {
+impl App<std::sync::mpsc::Sender<DummyResponse>> {
+    fn respond(&self, response: DummyResponse) {
+        self.tx.send(response).unwrap();
+    }
+}
+
+impl App<ipc_channel::ipc::IpcSender<DummyResponse>> {
+    fn respond(&self, response: DummyResponse) {
+        self.tx.send(response).unwrap();
+    }
+}
+
+impl<T> ApplicationHandler<DummyEvent> for App<T> {
     fn resumed(&mut self, _event_loop: &ActiveEventLoop) {}
 
     fn window_event(
@@ -65,6 +84,24 @@ impl ApplicationHandler<DummyEvent> for App {
             DummyEvent::NewWindow { title } => {
                 let window_attributes = create_window_attributes(title);
                 self.window = Some(event_loop.create_window(window_attributes).unwrap());
+            }
+            DummyEvent::GetWindowSize => {
+                let resp = match &self.window {
+                    Some(window) => {
+                        let sizes = window.inner_size();
+                        DummyResponse::WindowSize {
+                            width: sizes.width as _,
+                            height: sizes.height as _,
+                        }
+                    }
+                    None => DummyResponse::WindowSize {
+                        width: 0.0,
+                        height: 0.0,
+                    },
+                };
+
+                // TODO
+                // self.respond(resp);
             }
             DummyEvent::CloseWindow => {
                 self.close_window();

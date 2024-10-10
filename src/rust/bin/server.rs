@@ -32,6 +32,6 @@ fn main() {
         proxy.send_event(event).unwrap();
     });
 
-    let mut app = App::default();
+    let mut app = App { window: None, tx };
     event_loop.run_app(&mut app).unwrap();
 }

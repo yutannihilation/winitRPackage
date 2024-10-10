@@ -3,9 +3,15 @@ use std::sync::LazyLock;
 use savvy::savvy;
 use winit::event_loop::EventLoopProxy;
 
-use crate::{create_event_loop, App, DummyEvent, WindowController};
+use crate::{create_event_loop, App, DummyEvent, DummyResponse, WindowController};
 
-static EVENT_LOOP: LazyLock<EventLoopProxy<DummyEvent>> = LazyLock::new(|| {
+#[derive(Debug)]
+struct EventLoopWithRx {
+    event_loop: EventLoopProxy<DummyEvent>,
+    rx: std::sync::Mutex<std::sync::mpsc::Receiver<DummyResponse>>,
+}
+
+static EVENT_LOOP: LazyLock<EventLoopWithRx> = LazyLock::new(|| {
     // Note: this is used only for forwarding the proxy created in the spawned
     // thread. If necessary, channel can send more things.
     let (ch_send, ch_recv) = std::sync::mpsc::channel();
@@ -13,9 +19,13 @@ static EVENT_LOOP: LazyLock<EventLoopProxy<DummyEvent>> = LazyLock::new(|| {
     std::thread::spawn(move || {
         let event_loop = create_event_loop(true);
         event_loop.set_control_flow(winit::event_loop::ControlFlow::Wait);
-        let mut app = App::default();
+        let (tx, rx) = std::sync::mpsc::channel::<DummyResponse>();
+        let mut app = App { window: None, tx };
 
-        let proxy = event_loop.create_proxy();
+        let proxy = EventLoopWithRx {
+            event_loop: event_loop.create_proxy(),
+            rx: std::sync::Mutex::new(rx),
+        };
         ch_send.send(proxy).unwrap();
         event_loop.run_app(&mut app).unwrap();
     });
@@ -24,13 +34,12 @@ static EVENT_LOOP: LazyLock<EventLoopProxy<DummyEvent>> = LazyLock::new(|| {
 });
 
 #[savvy]
-struct SpawnedWindowController {
-    event_loop: EventLoopProxy<DummyEvent>,
-}
+struct SpawnedWindowController {}
 
 impl WindowController for SpawnedWindowController {
     fn send_event(&self, event: DummyEvent) -> savvy::Result<()> {
-        self.event_loop
+        EVENT_LOOP
+            .event_loop
             .send_event(event)
             .map_err(|e| format!("{e}").into())
     }
@@ -39,9 +48,7 @@ impl WindowController for SpawnedWindowController {
 #[savvy]
 impl SpawnedWindowController {
     fn new() -> savvy::Result<Self> {
-        Ok(Self {
-            event_loop: EVENT_LOOP.clone(),
-        })
+        Ok(Self {})
     }
 
     fn open_window(&mut self, title: &str) -> savvy::Result<()> {
