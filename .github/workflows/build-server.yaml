@@ -56,8 +56,12 @@ jobs:
 
     - name: release
       run: |
-        for f in $(ls ./artifacts/); do
-          tar -czf "${f}.tar.gz" ./artifacts/${f}/*
+        mkdir "${{ runner.temp }}/dist/"
+        cd ./artifacts/
+        for d in ./*; do
+          cd ${d}
+          tar -czf "${{ runner.temp }}/dist/${d}.tar.gz" ./server*
+          cd -
         done
 
-        gh release create v0.0.0-1 ./server-*.tar.gz
+        gh release create v0.0.0-1 "${{ runner.temp }}/dist/"
