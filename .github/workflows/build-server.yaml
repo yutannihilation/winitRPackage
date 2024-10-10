@@ -31,11 +31,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build Rust server
-        run: cargo build --release --manifest-path ./src/rust/Cargo.toml --bin winit_r_package_server
+        run: |
+          cargo version
+          cargo build --release --manifest-path ./src/rust/Cargo.toml --bin winit_r_package_server
 
       - uses: actions/upload-artifact@v4
-        name: server-${{ matrix.config.os }}
         with:
+          name: server-${{ matrix.config.os }}
           path: |
             ./src/rust/target/release/winit_r_package_server
             ./src/rust/target/release/winit_r_package_server.exe
