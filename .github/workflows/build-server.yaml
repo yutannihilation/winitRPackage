@@ -60,7 +60,7 @@ jobs:
         cd ./artifacts/
         for d in ./*; do
           cd ${d}
-          tar -czf "${{ runner.temp }}/dist/${d}.tar.gz" ./server*
+          tar -czf "${{ runner.temp }}/dist/${d}.tar.gz" ./winit_r_package_server*
           cd -
         done
 
