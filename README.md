@@ -1,6 +1,10 @@
 An experiment of using winit form R
 ===================================
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/yutannihilation/winitPumpRPackage/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/yutannihilation/winitPumpRPackage/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 The main difficulty is that winit requires to be executed on the main thread, whereas R REPL of course needs the main thread. So, how can we use winit?
 
 1. [`with_any_thread()`](https://docs.rs/winit/latest/winit/platform/wayland/trait.EventLoopBuilderExtWayland.html#tymethod.with_any_thread): available on Linux and Windows.
