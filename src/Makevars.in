@@ -23,7 +23,7 @@ $(STATLIB):
 	  if [ "$(TARGET)" != "wasm32-unknown-emscripten" ]; then \
 	    export CC="$(CC)" && \
 	    export CFLAGS="$(CFLAGS)" && \
-		export CXXFLAGS="$(CXXFLAGS) -mmacosx-version-min=14.0" \
+		export MACOSX_DEPLOYMENT_TARGET="14.0" && \
 		cargo build $(CARGO_BUILD_ARGS); \
 	  else \
 	    export CC="$(CC)" && \
