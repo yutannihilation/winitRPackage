@@ -34,7 +34,7 @@ fi
 
 if [ "$(uname)" = "Darwin" ]; then
   FEATURES="--features no_winit"
-  MACOS_LIBS="-lobjc"
+  MACOS_LIBS="-lobjc -fobjc-exceptions -fobjc-arc -fobjc-arc-exceptions"
 fi
 
 sed \
