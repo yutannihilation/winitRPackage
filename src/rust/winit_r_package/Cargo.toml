@@ -7,8 +7,8 @@ edition = "2021"
 crate-type = ["staticlib", "lib"]
 
 [features]
-default = ["winit", "winit_r_package_shared/winit"]
-no_winit = []
+default = []
+use_winit = ["winit", "winit_r_package_shared/winit"]
 
 [dependencies]
 ipc-channel = "0.18.3"

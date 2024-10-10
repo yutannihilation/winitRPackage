@@ -1,9 +1,9 @@
 mod external_window_controller;
 
-#[cfg(feature = "winit")]
+#[cfg(feature = "use_winit")]
 mod spawned_window_controller;
 
-#[cfg(not(feature = "winit"))]
+#[cfg(not(feature = "use_winit"))]
 mod spawned_window_controller_dummy;
 
 use winit_r_package_shared::{DummyEvent, DummyResponse};

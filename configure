@@ -32,8 +32,8 @@ if [ "$(uname)" = "Emscripten" ]; then
   TARGET="wasm32-unknown-emscripten"
 fi
 
-if [ "$(uname)" = "Darwin" ]; then
-  FEATURES="--features no_winit"
+if [ "$(uname)" != "Darwin" ]; then
+  FEATURES="--features use_winit"
   MACOS_LIBS="-lobjc"
   MACOS_CFLAGS="-fobjc-exceptions -fobjc-arc -fobjc-arc-exceptions"
 fi
@@ -41,6 +41,4 @@ fi
 sed \
   -e "s/@TARGET@/${TARGET}/" \
   -e "s/@FEATURES@/${FEATURES}/" \
-  -e "s/@MACOS_LIBS@/${MACOS_LIBS}/" \
-  -e "s/@MACOS_CFLAGS@/${MACOS_CFLAGS}/" \
   src/Makevars.in > src/Makevars
