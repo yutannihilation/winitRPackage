@@ -36,4 +36,9 @@ if [ "$(uname)" = "Darwin" ]; then
   FEATURES="--features no_winit"
 fi
 
+mkdir -p inst/
+cargo build --release --manifest-path .\src\rust\Cargo.toml --bin winit_r_package_server
+rm -f ./inst/winit_r_package_server
+cp ./src/rust/target/release/winit_r_package_server ./inst/
+
 sed -e "s/@TARGET@/${TARGET}/" -e "s/@FEATURES@/${FEATURES}/" src/Makevars.in > src/Makevars

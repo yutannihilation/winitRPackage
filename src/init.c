@@ -35,8 +35,8 @@ SEXP handle_result(SEXP res_) {
 }
 
 
-SEXP savvy_ExternalWindowController_new__impl(void) {
-    SEXP res = savvy_ExternalWindowController_new__ffi();
+SEXP savvy_ExternalWindowController_new__impl(SEXP c_arg__server) {
+    SEXP res = savvy_ExternalWindowController_new__ffi(c_arg__server);
     return handle_result(res);
 }
 
@@ -83,7 +83,7 @@ SEXP savvy_SpawnedWindowController_close_window__impl(SEXP self__) {
 
 static const R_CallMethodDef CallEntries[] = {
 
-    {"savvy_ExternalWindowController_new__impl", (DL_FUNC) &savvy_ExternalWindowController_new__impl, 0},
+    {"savvy_ExternalWindowController_new__impl", (DL_FUNC) &savvy_ExternalWindowController_new__impl, 1},
     {"savvy_ExternalWindowController_new_debug__impl", (DL_FUNC) &savvy_ExternalWindowController_new_debug__impl, 0},
     {"savvy_ExternalWindowController_open_window__impl", (DL_FUNC) &savvy_ExternalWindowController_open_window__impl, 2},
     {"savvy_ExternalWindowController_get_window_size__impl", (DL_FUNC) &savvy_ExternalWindowController_get_window_size__impl, 1},

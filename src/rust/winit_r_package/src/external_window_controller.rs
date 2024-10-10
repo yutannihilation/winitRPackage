@@ -31,20 +31,12 @@ impl WindowController for ExternalWindowController {
 }
 
 impl ExternalWindowController {
-    fn new_inner(launch_manually: bool) -> savvy::Result<Self> {
+    fn new_inner(server: Option<&str>) -> savvy::Result<Self> {
         // server -> controller
         let (rx_server, rx_server_name) = IpcOneShotServer::<DummyResponse>::new().unwrap();
 
-        let server_process = if launch_manually {
-            savvy::r_eprintln!("rx_server_name: {rx_server_name}");
-            None
-        } else {
+        let server_process = if let Some(server_bin) = server {
             // spawn a server process
-            let server_bin = if cfg!(windows) {
-                "./src/rust/target/debug/winit_r_package_server.exe"
-            } else {
-                "./src/rust/target/debug/winit_r_package_server"
-            };
             let res = std::process::Command::new(server_bin)
                 .arg(rx_server_name)
                 // .stdout(std::process::Stdio::piped())
@@ -60,6 +52,9 @@ impl ExternalWindowController {
                     return Err(savvy::Error::new(&msg));
                 }
             }
+        } else {
+            savvy::r_eprintln!("rx_server_name: {rx_server_name}");
+            None
         };
 
         // establish connections of both direction
@@ -85,13 +80,13 @@ impl ExternalWindowController {
 
 #[savvy]
 impl ExternalWindowController {
-    fn new() -> savvy::Result<Self> {
-        Self::new_inner(false)
+    fn new(server: &str) -> savvy::Result<Self> {
+        Self::new_inner(Some(server))
     }
 
     // launch server manually for debugging the server side
     fn new_debug() -> savvy::Result<Self> {
-        Self::new_inner(true)
+        Self::new_inner(None)
     }
 
     fn open_window(&mut self, title: &str) -> savvy::Result<()> {
