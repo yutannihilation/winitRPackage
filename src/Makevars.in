@@ -7,9 +7,7 @@ FEATURES = @FEATURES@
 TARGET_DIR = $(CURDIR)/rust/target
 LIBDIR = $(TARGET_DIR)/$(TARGET)/$(subst dev,debug,$(PROFILE))
 STATLIB = $(LIBDIR)/libwinit_r_package.a
-MACOS_LIBS = @MACOS_LIBS@
-MACOS_CFLAGS = @MACOS_CFLAGS@
-PKG_LIBS = -L$(LIBDIR) -lwinit_r_package $(MACOS_LIBS)
+PKG_LIBS = -L$(LIBDIR) -lwinit_r_package
 
 CARGO_BUILD_ARGS = --lib --profile $(PROFILE) --manifest-path=./rust/winit_r_package/Cargo.toml --target-dir $(TARGET_DIR) $(FEATURES) -vvv
 
@@ -24,7 +22,7 @@ $(STATLIB):
 	export PATH="$(PATH):$(HOME)/.cargo/bin" && \
 	  if [ "$(TARGET)" != "wasm32-unknown-emscripten" ]; then \
 	    export CC="$(CC)" && \
-	    export CFLAGS="$(CFLAGS) $(MACOS_CFLAGS)" && \
+	    export CFLAGS="$(CFLAGS)" && \
 	    export MACOSX_DEPLOYMENT_TARGET="14.0" && \
 	    cargo build $(CARGO_BUILD_ARGS); \
 	  else \
