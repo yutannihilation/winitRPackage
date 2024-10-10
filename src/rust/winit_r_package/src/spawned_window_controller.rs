@@ -2,8 +2,9 @@ use std::sync::LazyLock;
 
 use savvy::savvy;
 use winit::event_loop::EventLoopProxy;
+use winit_r_package_shared::window::{create_event_loop, App};
 
-use crate::{create_event_loop, App, DummyEvent, DummyResponse, WindowController};
+use crate::{DummyEvent, DummyResponse, WindowController};
 
 #[derive(Debug)]
 struct EventLoopWithRx {

@@ -3,8 +3,9 @@ mod external_window_controller;
 #[cfg(feature = "winit")]
 mod spawned_window_controller;
 
-#[cfg(feature = "winit")]
-pub use winit_r_package_shared::window::{create_event_loop, App};
+#[cfg(not(feature = "winit"))]
+mod spawned_window_controller_dummy;
+
 use winit_r_package_shared::{DummyEvent, DummyResponse};
 
 // Note: why does these default methods have "_impl" suffix? This is because

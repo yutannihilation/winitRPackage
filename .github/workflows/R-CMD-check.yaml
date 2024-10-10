@@ -44,9 +44,6 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
-      - name: Build Rust server
-        run: cargo build --manifest-path ./src/rust/Cargo.toml --bin winit_r_package_server -vvv
-
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-results: 'never'
@@ -55,3 +52,6 @@ jobs:
       - name: show R error
         if: failure()
         run: cat ./check/winitRpackage.Rcheck/00install.out
+
+      - name: Build Rust server
+        run: cargo build --manifest-path ./src/rust/Cargo.toml --bin winit_r_package_server
