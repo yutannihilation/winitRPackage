@@ -52,6 +52,3 @@ jobs:
       - name: show R error
         if: failure()
         run: cat ./check/winitRpackage.Rcheck/00install.out
-
-      - name: Build Rust server
-        run: cargo build --manifest-path ./src/rust/Cargo.toml --bin winit_r_package_server
