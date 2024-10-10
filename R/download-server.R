@@ -1,5 +1,5 @@
 pkg_cache_dir <- function() {
-  normalizePath(tools::R_user_dir("winitRpackage", "cache"), mustWork = FALSE)
+  normalizePath(tools::R_user_dir("winitRPackage", "cache"), mustWork = FALSE)
 }
 
 server_path <- function() {
