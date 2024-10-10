@@ -1,0 +1,9 @@
+[package]
+name = "winit_r_package_server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ipc-channel = "0.18.3"
+winit = "0.30.5"
+winit_r_package_shared = { path = "../winit_r_package_shared" }

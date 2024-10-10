@@ -1814,6 +1814,24 @@ version = "0.1.0"
 dependencies = [
  "ipc-channel",
  "savvy",
+ "winit",
+ "winit_r_package_shared",
+]
+
+[[package]]
+name = "winit_r_package_server"
+version = "0.1.0"
+dependencies = [
+ "ipc-channel",
+ "winit",
+ "winit_r_package_shared",
+]
+
+[[package]]
+name = "winit_r_package_shared"
+version = "0.1.0"
+dependencies = [
+ "ipc-channel",
  "serde",
  "winit",
 ]

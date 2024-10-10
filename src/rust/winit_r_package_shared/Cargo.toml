@@ -1,0 +1,13 @@
+[package]
+name = "winit_r_package_shared"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["winit"]
+no_winit = []
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+winit = { version = "0.30.5", optional = true }
+ipc-channel = "0.18.3"

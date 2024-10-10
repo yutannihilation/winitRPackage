@@ -41,9 +41,9 @@ impl ExternalWindowController {
         } else {
             // spawn a server process
             let server_bin = if cfg!(windows) {
-                "./src/rust/target/debug/server.exe"
+                "./src/rust/target/debug/winit_r_package_server.exe"
             } else {
-                "./src/rust/target/debug/server"
+                "./src/rust/target/debug/winit_r_package_server"
             };
             let res = std::process::Command::new(server_bin)
                 .arg(rx_server_name)

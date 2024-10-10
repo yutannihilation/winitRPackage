@@ -2,45 +2,10 @@ mod external_window_controller;
 
 #[cfg(feature = "winit")]
 mod spawned_window_controller;
-#[cfg(feature = "winit")]
-mod window;
 
 #[cfg(feature = "winit")]
-pub use window::{create_event_loop, App};
-
-use serde::{Deserialize, Serialize};
-
-#[derive(Serialize, Deserialize, Debug)]
-pub enum DummyEvent {
-    NewWindow { title: String },
-    GetWindowSize,
-    CloseWindow,
-    ConnectionReady, // This is not an event for Window management. Only used for server-client.
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub enum DummyResponse {
-    Connect { server_name: String },
-    WindowSize { width: f64, height: f64 },
-}
-
-pub trait AppResponseRelay {
-    fn respond(&self, response: DummyResponse);
-}
-
-// for spawned_window_controller
-impl AppResponseRelay for std::sync::mpsc::Sender<DummyResponse> {
-    fn respond(&self, response: DummyResponse) {
-        self.send(response).unwrap();
-    }
-}
-
-// For external_window_controller
-impl AppResponseRelay for ipc_channel::ipc::IpcSender<DummyResponse> {
-    fn respond(&self, response: DummyResponse) {
-        self.send(response).unwrap();
-    }
-}
+pub use winit_r_package_shared::window::{create_event_loop, App};
+use winit_r_package_shared::{DummyEvent, DummyResponse};
 
 // Note: why does these default methods have "_impl" suffix? This is because
 // savvy is not smart enough to parse trait so that each method has to be
