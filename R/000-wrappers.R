@@ -24,10 +24,6 @@ NULL
 }
 
 
-`run_event_loop_on_spawned_thread` <- function() {
-  invisible(.Call(savvy_run_event_loop_on_spawned_thread__impl))
-}
-
 ### wrapper functions for ExternalWindowController
 
 `ExternalWindowController_open_window` <- function(self) {

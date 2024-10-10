@@ -34,10 +34,6 @@ SEXP handle_result(SEXP res_) {
     return (SEXP)res;
 }
 
-SEXP savvy_run_event_loop_on_spawned_thread__impl(void) {
-    SEXP res = savvy_run_event_loop_on_spawned_thread__ffi();
-    return handle_result(res);
-}
 
 SEXP savvy_ExternalWindowController_new__impl(void) {
     SEXP res = savvy_ExternalWindowController_new__ffi();
@@ -71,7 +67,7 @@ SEXP savvy_SpawnedWindowController_close_window__impl(SEXP self__) {
 
 
 static const R_CallMethodDef CallEntries[] = {
-    {"savvy_run_event_loop_on_spawned_thread__impl", (DL_FUNC) &savvy_run_event_loop_on_spawned_thread__impl, 0},
+
     {"savvy_ExternalWindowController_new__impl", (DL_FUNC) &savvy_ExternalWindowController_new__impl, 0},
     {"savvy_ExternalWindowController_open_window__impl", (DL_FUNC) &savvy_ExternalWindowController_open_window__impl, 2},
     {"savvy_ExternalWindowController_close_window__impl", (DL_FUNC) &savvy_ExternalWindowController_close_window__impl, 1},
