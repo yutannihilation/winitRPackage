@@ -7,7 +7,8 @@ FEATURES = @FEATURES@
 TARGET_DIR = $(CURDIR)/rust/target
 LIBDIR = $(TARGET_DIR)/$(TARGET)/$(subst dev,debug,$(PROFILE))
 STATLIB = $(LIBDIR)/libwinit_r_package.a
-PKG_LIBS = -L$(LIBDIR) -lwinit_r_package
+MACOS_LIBS = @MACOS_LIBS@
+PKG_LIBS = -L$(LIBDIR) -lwinit_r_package $(MACOS_LIBS)
 
 CARGO_BUILD_ARGS = --lib --profile $(PROFILE) --manifest-path=./rust/winit_r_package/Cargo.toml --target-dir $(TARGET_DIR) $(FEATURES)
 

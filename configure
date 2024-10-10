@@ -34,6 +34,11 @@ fi
 
 if [ "$(uname)" = "Darwin" ]; then
   FEATURES="--features no_winit"
+  MACOS_LIBS="-lobjc"
 fi
 
-sed -e "s/@TARGET@/${TARGET}/" -e "s/@FEATURES@/${FEATURES}/" src/Makevars.in > src/Makevars
+sed \
+  -e "s/@TARGET@/${TARGET}/" \
+  -e "s/@FEATURES@/${FEATURES}/" \
+  -e "s//@MACOS_LIBS@/MACOS_LIBS/" \
+  src/Makevars.in > src/Makevars
