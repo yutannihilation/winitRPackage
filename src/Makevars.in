@@ -9,7 +9,7 @@ LIBDIR = $(TARGET_DIR)/$(TARGET)/$(subst dev,debug,$(PROFILE))
 STATLIB = $(LIBDIR)/libwinit_r_package.a
 PKG_LIBS = -L$(LIBDIR) -lwinit_r_package
 
-CARGO_BUILD_ARGS = --lib --profile $(PROFILE) --manifest-path=./rust/Cargo.toml --target-dir $(TARGET_DIR) $(FEATURES) -vvv
+CARGO_BUILD_ARGS = --lib --profile $(PROFILE) --manifest-path=./rust/Cargo.toml --target-dir $(TARGET_DIR) $(FEATURES)
 
 all: C_clean
 
@@ -23,6 +23,7 @@ $(STATLIB):
 	  if [ "$(TARGET)" != "wasm32-unknown-emscripten" ]; then \
 	    export CC="$(CC)" && \
 	    export CFLAGS="$(CFLAGS)" && \
+		export CXXFLAGS="$(CXXFLAGS) -mmacosx-version-min=14.0"
 		cargo build $(CARGO_BUILD_ARGS); \
 	  else \
 	    export CC="$(CC)" && \
