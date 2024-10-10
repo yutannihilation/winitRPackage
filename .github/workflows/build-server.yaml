@@ -35,9 +35,10 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         name: server-${{ matrix.config.os }}
-        path: |
-          ./src/rust/target/release/winit_r_package_server
-          ./src/rust/target/release/winit_r_package_server.exe
+        with:
+          path: |
+            ./src/rust/target/release/winit_r_package_server
+            ./src/rust/target/release/winit_r_package_server.exe
 
   release:
     needs: build
@@ -46,7 +47,11 @@ jobs:
     - uses: actions/checkout@v4
 
     - uses: actions/download-artifact@v4
+      with:
+        path: artifacts/
+        pattern: server-*
 
     - name: ls
       run: |
-        ls
+        ls artifacts/
+        gh release create v0.0.0 ./artifacts/*

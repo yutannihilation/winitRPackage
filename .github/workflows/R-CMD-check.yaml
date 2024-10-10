@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config:
+        config: []
           # - {os: windows-latest, r: 'release',  rust: 'stable-msvc'}
           # - {os: macOS-latest,   r: 'release',  rust: 'stable'     }
           # - {os: ubuntu-latest,  r: 'release',  rust: 'stable'     }
