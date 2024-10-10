@@ -1,0 +1,52 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+name: build server
+
+permissions: read-all
+
+jobs:
+  build:
+    runs-on: ${{ matrix.config.os }}
+
+    name: "${{ matrix.config.os }}"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: windows-latest}
+          - {os: macOS-latest  }
+          - {os: ubuntu-latest }
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Rust server
+        run: cargo build --release --manifest-path ./src/rust/Cargo.toml --bin winit_r_package_server
+
+      - uses: actions/upload-artifact@v4
+        name: server-${{ matrix.config.os }}
+        path: |
+          ./src/rust/target/release/winit_r_package_server
+          ./src/rust/target/release/winit_r_package_server.exe
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/download-artifact@v4
+
+    - name: ls
+      run: |
+        ls
