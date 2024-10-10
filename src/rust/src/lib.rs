@@ -1,4 +1,6 @@
-use std::{process::Stdio, sync::OnceLock};
+mod spawned;
+
+use std::process::Stdio;
 
 use ipc_channel::ipc::{IpcOneShotServer, IpcReceiver, IpcSender};
 use savvy::savvy;
@@ -96,11 +98,6 @@ fn add_platform_specific_attributes(attrs: WindowAttributes) -> WindowAttributes
     attrs
 }
 
-#[savvy]
-struct SpawnedWindowController {
-    event_loop: EventLoopProxy<DummyEvent>,
-}
-
 #[cfg(target_os = "windows")]
 fn create_event_loop(any_thread: bool) -> winit::event_loop::EventLoop<DummyEvent> {
     use winit::platform::windows::EventLoopBuilderExtWayland;
@@ -131,31 +128,6 @@ fn create_event_loop(any_thread: bool) -> winit::event_loop::EventLoop<DummyEven
         .unwrap()
 }
 
-static EVENT_LOOP: OnceLock<EventLoopProxy<DummyEvent>> = OnceLock::new();
-
-#[savvy]
-fn run_event_loop_on_spawned_thread() -> savvy::Result<()> {
-    // Note: it's possible to create and send more than the proxy. For example,
-    // we can probably send Window. However, probably it's better to let the App
-    // cotnrol the window.
-    let (ch_send, ch_recv) = std::sync::mpsc::channel();
-
-    std::thread::spawn(move || {
-        let event_loop = create_event_loop(true);
-        event_loop.set_control_flow(winit::event_loop::ControlFlow::Wait);
-        let mut app = App::default();
-
-        let proxy = event_loop.create_proxy();
-        ch_send.send(proxy).unwrap();
-        event_loop.run_app(&mut app).unwrap();
-    });
-
-    let proxy = ch_recv.recv().unwrap();
-    EVENT_LOOP
-        .set(proxy)
-        .map_err(|_| "Failed to set EVENT_LOOP".into())
-}
-
 #[savvy]
 struct ExternalWindowController {
     process: std::process::Child,
@@ -169,6 +141,12 @@ impl Drop for ExternalWindowController {
             // Note: if the process already exited, kill() returns Ok(())
             .kill()
             .unwrap_or_else(|e| panic!("Failed to kill the process {e}"))
+    }
+}
+
+impl WindowController for ExternalWindowController {
+    fn send_event(&self, event: DummyEvent) -> savvy::Result<()> {
+        self.tx.send(event).map_err(|e| format!("{e}").into())
     }
 }
 
@@ -213,41 +191,27 @@ impl ExternalWindowController {
     }
 
     fn open_window(&mut self, title: &str) -> savvy::Result<()> {
-        self.tx
-            .send(DummyEvent::NewWindow {
-                title: title.to_string(),
-            })
-            .unwrap();
-        Ok(())
+        self.open_window_impl(title)
     }
 
     fn close_window(&mut self) -> savvy::Result<()> {
-        self.tx.send(DummyEvent::CloseWindow).unwrap();
-        Ok(())
+        self.close_window_impl()
     }
 }
 
-#[savvy]
-impl SpawnedWindowController {
-    fn new() -> savvy::Result<Self> {
-        let event_loop = match EVENT_LOOP.get() {
-            Some(event_loop) => event_loop.clone(),
-            None => return Err("EVENT_LOOP is not initialized yet".into()),
-        };
-        Ok(Self { event_loop })
+// Note: why does these default methods have "_impl" suffix? This is because
+// savvy is not smart enough to parse trait so that each method has to be
+// implemented in each struct in order to be exported to R.
+pub trait WindowController {
+    fn send_event(&self, event: DummyEvent) -> savvy::Result<()>;
+
+    fn open_window_impl(&mut self, title: &str) -> savvy::Result<()> {
+        self.send_event(DummyEvent::NewWindow {
+            title: title.to_string(),
+        })
     }
 
-    fn open_window(&mut self, title: &str) -> savvy::Result<()> {
-        self.event_loop
-            .send_event(DummyEvent::NewWindow {
-                title: title.to_string(),
-            })
-            .unwrap();
-        Ok(())
-    }
-
-    fn close_window(&mut self) -> savvy::Result<()> {
-        self.event_loop.send_event(DummyEvent::CloseWindow).unwrap();
-        Ok(())
+    fn close_window_impl(&mut self) -> savvy::Result<()> {
+        self.send_event(DummyEvent::CloseWindow)
     }
 }

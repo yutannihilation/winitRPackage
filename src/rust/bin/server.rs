@@ -24,6 +24,9 @@ fn main() {
     event_loop.set_control_flow(winit::event_loop::ControlFlow::Wait);
     let proxy = event_loop.create_proxy();
 
+    // Since the main thread will be occupied by event_loop, the server needs to
+    // run in a spawned thread. rx waits for the event and forward it to
+    // event_loop via proxy.
     std::thread::spawn(move || loop {
         let event = rx.recv().unwrap();
         proxy.send_event(event).unwrap();
