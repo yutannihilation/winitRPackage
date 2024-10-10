@@ -28,6 +28,15 @@ x$close_window()
 
 ### Use an external process
 
+This runs a server on a separate process. Please run the following command to
+download the server binary first.
+
+```r
+download_server()
+```
+
+After that, it works the same as the above.
+
 ```r
 x <- ExternalWindowController$new()
 
