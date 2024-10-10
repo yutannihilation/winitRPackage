@@ -40,5 +40,5 @@ fi
 sed \
   -e "s/@TARGET@/${TARGET}/" \
   -e "s/@FEATURES@/${FEATURES}/" \
-  -e "s//@MACOS_LIBS@/MACOS_LIBS/" \
+  -e "s/@MACOS_LIBS@/${MACOS_LIBS}/" \
   src/Makevars.in > src/Makevars
