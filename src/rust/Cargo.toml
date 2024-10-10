@@ -17,6 +17,3 @@ resolver = "2"
 # crate and there's little you can do. In such cases, you can change the
 # following line to `panic = "unwind"` to always catch a panic.
 panic = "abort"
-
-[patch.crates-io]
-objc2-app-kit = { git = "https://github.com/madsmtm/objc2" }
