@@ -12,13 +12,10 @@ struct ExternalWindowController {
 
 impl Drop for ExternalWindowController {
     fn drop(&mut self) {
-        match self.process.as_mut() {
-            Some(c) => {
-                // Note: if the process already exited, kill() returns Ok(())
-                c.kill()
-                    .unwrap_or_else(|e| panic!("Failed to kill the process {e}"))
-            }
-            None => {}
+        if let Some(c) = self.process.as_mut() {
+            // Note: if the process already exited, kill() returns Ok(())
+            c.kill()
+                .unwrap_or_else(|e| panic!("Failed to kill the process {e}"))
         }
     }
 }

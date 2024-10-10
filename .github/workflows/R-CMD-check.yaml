@@ -48,3 +48,6 @@ jobs:
         with:
           upload-snapshots: false
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+
+      - name: Build Rust server
+        run: cargo build --manifest-path ./src/rust/Cargo.toml --bin server

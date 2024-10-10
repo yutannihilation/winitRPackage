@@ -1,5 +1,6 @@
 use ipc_channel::ipc::{IpcOneShotServer, IpcSender};
-use winit_r_package::{create_event_loop, App, DummyEvent, DummyResponse};
+use winit_r_package::{create_event_loop, App};
+use winit_r_package::{DummyEvent, DummyResponse};
 
 fn main() {
     let tx_server_name = std::env::args().nth(1).unwrap();

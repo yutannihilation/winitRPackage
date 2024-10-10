@@ -10,10 +10,14 @@ crate-type = ["staticlib", "lib"]
 name = "server"
 path = "bin/server.rs"
 
+[features]
+default = ["winit"]
+no_winit = []
+
 [dependencies]
 ipc-channel = "0.18.3"
 savvy = "*"
-winit = "0.30.5"
+winit = { version = "0.30.5", optional = true }
 serde = { version = "1.0", features = ["derive"] }
 
 [profile.release]
