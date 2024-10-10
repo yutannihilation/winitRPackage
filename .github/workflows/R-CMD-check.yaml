@@ -44,10 +44,21 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      - name: debug
+        run: |
+          which clang
+          clang --version
+          Rscript -e "Sys.which('clang')"
+          Rscript -e "system2('clang', args = '--version')"
+
       - uses: r-lib/actions/check-r-package@v2
         with:
-          upload-snapshots: false
+          upload-results: 'never'
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+      
+      - name: show R error
+        if: failure()
+        run: cat ./check/winitRpackage.Rcheck/00install.out
 
       - name: Build Rust server
         run: cargo build --manifest-path ./src/rust/Cargo.toml --bin winit_r_package_server
