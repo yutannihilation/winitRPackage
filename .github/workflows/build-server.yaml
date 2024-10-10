@@ -44,6 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    if: github.ref_type == 'tag'
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
@@ -65,4 +66,4 @@ jobs:
           cd -
         done
 
-        gh release create v0.0.0-1 ${{ runner.temp }}/dist/*
+        gh release create ${{ github.ref_name }} ${{ runner.temp }}/dist/*
