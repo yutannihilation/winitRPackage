@@ -9,7 +9,7 @@ server_path <- function() {
     "winit_r_package_server"
   }
 
-  path <- file.path(pkg_cache_dir(), bin)
+  file.path(pkg_cache_dir(), bin)
 }
 
 URL_BASE <- "https://github.com/yutannihilation/winitRPackage/releases/download"
