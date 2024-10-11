@@ -1,5 +1,6 @@
 use savvy::savvy;
 
+/// @export
 #[savvy]
 struct SpawnedWindowController {}
 

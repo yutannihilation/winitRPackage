@@ -3,6 +3,7 @@ use savvy::savvy;
 
 use crate::{DummyEvent, DummyResponse, WindowController};
 
+/// @export
 #[savvy]
 struct ExternalWindowController {
     process: Option<std::process::Child>,

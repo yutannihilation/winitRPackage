@@ -62,7 +62,7 @@ NULL
 `[[<-.ExternalWindowController` <- function(x, i, value) stop("ExternalWindowController cannot be modified", call. = FALSE)
 
 
-
+#' @export
 `ExternalWindowController` <- new.env(parent = emptyenv())
 
 #' @export
@@ -132,8 +132,7 @@ class(`ExternalWindowController`) <- "ExternalWindowController__bundle"
 #' @export
 `[[<-.SpawnedWindowController` <- function(x, i, value) stop("SpawnedWindowController cannot be modified", call. = FALSE)
 
-
-
+#' @export
 `SpawnedWindowController` <- new.env(parent = emptyenv())
 
 #' @export

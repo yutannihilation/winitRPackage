@@ -34,6 +34,7 @@ static EVENT_LOOP: LazyLock<EventLoopWithRx> = LazyLock::new(|| {
     ch_recv.recv().unwrap()
 });
 
+/// @export
 #[savvy]
 struct SpawnedWindowController {}
 
