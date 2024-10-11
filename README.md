@@ -12,7 +12,31 @@ This R package is to show how winit can be used within an R package. The main di
 1. [`with_any_thread()`](https://docs.rs/winit/latest/winit/platform/wayland/trait.EventLoopBuilderExtWayland.html#tymethod.with_any_thread): available on Linux and Windows.
 2. Run an external server process. This is probably slow, but macOS has no other choice but this. They say [XPC](https://developer.apple.com/documentation/xpc) is better in performance, but I haven't tried this yet (mainly because I don't have a macOS machine now).
 
+## Installation
+
+This package can be installed from R-universe. You don't need to have Rust installed in your computer!
+
+```r
+install.packages("winitRPackage",
+  repos = c('https://yutannihilation.r-universe.dev', 'https://cloud.r-project.org')
+)
+```
+
+## Usages
+
+First, please run `download_server()` to download the server binary.
+This will be used by `ExternalWindowController`.
+
+```r
+library(winitRPackage)
+
+download_server()
+```
+
 ### Use a spawned process
+
+> [!NOTE]
+> For a technical limitation, this doesn't work on macOS!
 
 ```r
 x <- SpawnedWindowController$new()
@@ -29,13 +53,6 @@ x$close_window()
 ```
 
 ### Use an external process
-
-This runs a server on a separate process. Please run the following command to
-download the server binary first.
-
-```r
-download_server()
-```
 
 After that, it works the same as the above.
 
