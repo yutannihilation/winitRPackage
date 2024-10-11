@@ -36,6 +36,11 @@ jobs:
           cargo version
           cargo build --release --manifest-path ./src/rust/Cargo.toml --bin winit_r_package_server
 
+      - name: Set executable
+        if: runner.os != 'Windows'
+        run: |
+          chmod +x ./src/rust/target/release/winit_r_package_server
+
       - uses: actions/upload-artifact@v4
         with:
           name: server-${{ runner.os }}-${{ runner.arch }}
