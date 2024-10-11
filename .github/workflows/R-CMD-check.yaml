@@ -47,6 +47,7 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-results: 'never'
+          error-on: '"error"'
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
       
       - name: show R error
