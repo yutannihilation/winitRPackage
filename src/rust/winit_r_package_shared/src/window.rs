@@ -51,7 +51,9 @@ impl<T: AppResponseRelay> ApplicationHandler<DummyEvent> for App<T> {
         match event {
             DummyEvent::NewWindow { title } => {
                 let window_attributes = create_window_attributes(title);
-                self.window = Some(event_loop.create_window(window_attributes).unwrap());
+                let window = event_loop.create_window(window_attributes).unwrap();
+                window.focus_window();
+                self.window = Some(window);
             }
             DummyEvent::GetWindowSize => {
                 let resp = match &self.window {

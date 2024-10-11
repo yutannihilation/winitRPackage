@@ -33,13 +33,10 @@ library(winitRPackage)
 download_server()
 ```
 
-### Use a spawned process
-
-> [!NOTE]
-> For a technical limitation, this doesn't work on macOS!
+### Use an external process
 
 ```r
-x <- SpawnedWindowController$new()
+x <- ExternalWindowController$new()
 
 # create a new window titled "foo"
 x$open_window("foo")
@@ -52,12 +49,13 @@ x$get_window_size()
 x$close_window()
 ```
 
-### Use an external process
+### Use a spawned process
 
-After that, it works the same as the above.
+> [!NOTE]
+> For a technical limitation, this doesn't work on macOS!
 
 ```r
-x <- ExternalWindowController$new()
+x <- SpawnedWindowController$new()
 
 # create a new window titled "foo"
 x$open_window("foo")
