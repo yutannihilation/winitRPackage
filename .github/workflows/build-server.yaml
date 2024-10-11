@@ -36,11 +36,6 @@ jobs:
           cargo version
           cargo build --release --manifest-path ./src/rust/Cargo.toml --bin winit_r_package_server
 
-      - name: Set executable
-        if: runner.os != 'Windows'
-        run: |
-          chmod +x ./src/rust/target/release/winit_r_package_server
-
       - uses: actions/upload-artifact@v4
         if: github.ref_type == 'tag'
         with:
@@ -72,6 +67,7 @@ jobs:
           echo "./artifacts/${d}"
           
           cd "./artifacts/${d}"
+          chmod +x ./winit_r_package_server*
           tar -czf "${{ runner.temp }}/dist/${d}.tar.gz" ./winit_r_package_server*
           cd -
         done
