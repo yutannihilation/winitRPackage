@@ -30,5 +30,5 @@ fi
 
 sed \
   -e "s/@TARGET@/x86_64-pc-windows-gnu/" \
-  -e "s/@CARGO_TARGET_DIR@/${CARGO_TARGET_DIR}/" \
+  -e "s|@CARGO_TARGET_DIR@|${CARGO_TARGET_DIR}|" \
   src/Makevars.win.in > src/Makevars.win

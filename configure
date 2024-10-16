@@ -46,5 +46,5 @@ fi
 sed \
   -e "s/@TARGET@/${TARGET}/" \
   -e "s/@FEATURES@/${FEATURES}/" \
-  -e "s/@CARGO_TARGET_DIR@/${CARGO_TARGET_DIR}/" \
+  -e "s|@CARGO_TARGET_DIR@|${CARGO_TARGET_DIR}|" \
   src/Makevars.in > src/Makevars
