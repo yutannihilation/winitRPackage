@@ -33,8 +33,8 @@ if [ "$(uname)" = "Emscripten" ]; then
 fi
 
 if [ -d "${RUNNER_TEMP}" ]; then
-  echo "Detected GitHub Actions envvar. Using ${RUNNER_TEMP} for the target dir of cargo"
-  CARGO_TARGET_DIR="${RUNNER_TEMP}/target"
+  CARGO_TARGET_DIR="${RUNNER_TEMP}/rust-target"
+  echo "Detected GitHub Actions envvar. Using ${CARGO_TARGET_DIR} for the target dir of cargo"
 else
   CARGO_TARGET_DIR='$(CURDIR)/rust/target'
 fi

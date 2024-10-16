@@ -46,7 +46,7 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: "src/rust -> ${{ runner.temp }}/target"
+          workspaces: "src/rust -> ${{ runner.temp }}/rust-target"
           shared-key: rust-cache-${{ runner.os }}-${{ matrix.config.rust }}
 
       - uses: r-lib/actions/check-r-package@v2

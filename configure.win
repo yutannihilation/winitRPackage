@@ -22,8 +22,8 @@ echo "using Rust package manager: '${CARGO_VERSION}'"
 echo "using Rust compiler: '${RUSTC_VERSION}'"
 
 if [ -d "${RUNNER_TEMP}" ]; then
-  echo "Detected GitHub Actions envvar. Using ${RUNNER_TEMP}/target for the target dir of cargo"
-  CARGO_TARGET_DIR="${RUNNER_TEMP}/target"
+  CARGO_TARGET_DIR=$(echo "${RUNNER_TEMP}/rust-target" | sed -e 's|\|/|g') # normalize path
+  echo "Detected GitHub Actions envvar. Using ${CARGO_TARGET_DIR} for the target dir of cargo"
 else
   CARGO_TARGET_DIR='$(CURDIR)/rust/target'
 fi
