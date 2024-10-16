@@ -54,7 +54,6 @@ jobs:
 
       - name: debug
         run: |
-          find src/rust/target -exec touch {} \;
           Rscript -e 'pkgbuild::compile_dll(debug = FALSE)'
 
       - uses: r-lib/actions/check-r-package@v2
