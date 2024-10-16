@@ -12,6 +12,8 @@ This R package is to show how winit can be used within an R package. The main di
 1. [`with_any_thread()`](https://docs.rs/winit/latest/winit/platform/wayland/trait.EventLoopBuilderExtWayland.html#tymethod.with_any_thread): available on Linux and Windows.
 2. Run an external server process. This is probably slow, but macOS has no other choice but this. They say [XPC](https://developer.apple.com/documentation/xpc) is better in performance, but I haven't tried this yet (mainly because I don't have a macOS machine now).
 
+For more details, please refer to [my blog post](https://yutani.rbind.io/post/winit-and-r/).
+
 ## Installation
 
 This package can be installed from R-universe. You don't need to have Rust installed in your computer!
