@@ -49,6 +49,16 @@ jobs:
           workspaces: src/rust
           shared-key: rust-cache-${{ runner.os }}-${{ matrix.config.rust }}
 
+      - name: debug
+        run: |
+          # debug
+          if [ "${{ runner.os }}" != "Windows" ]; then
+            ls -l src/rust/target/release/deps || true
+          else
+            ls -l src/rust/target/x86_64-pc-windows-gnu/release/deps || true
+          fi
+        shell: bash
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-results: 'never'
@@ -62,3 +72,11 @@ jobs:
           cat ./check/winitRPackage.Rcheck/00install.out
           echo "--<< 00check.log >>-------------------------"
           cat ./check/winitRPackage.Rcheck/00check.log
+          
+          # debug
+          if [ "${{ runner.os }}" != "Windows" ]; then
+            ls -l src/rust/target/release/deps
+          else
+            ls -l src/rust/target/x86_64-pc-windows-gnu/release/deps
+          fi
+        shell: bash
