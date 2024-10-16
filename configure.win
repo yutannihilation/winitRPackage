@@ -21,4 +21,14 @@ RUSTC_VERSION="$(rustc --version || true)"
 echo "using Rust package manager: '${CARGO_VERSION}'"
 echo "using Rust compiler: '${RUSTC_VERSION}'"
 
-sed -e "s/@TARGET@/x86_64-pc-windows-gnu/" src/Makevars.win.in > src/Makevars.win
+if [ -d "${RUNNER_TEMP}" ]; then
+  echo "Detected GitHub Actions envvar. Using ${RUNNER_TEMP}/target for the target dir of cargo"
+  CARGO_TARGET_DIR="${RUNNER_TEMP}/target"
+else
+  CARGO_TARGET_DIR='$(CURDIR)/rust/target'
+fi
+
+sed \
+  -e "s/@TARGET@/x86_64-pc-windows-gnu/" \
+  -e "s/@CARGO_TARGET_DIR@/${CARGO_TARGET_DIR}/" \
+  src/Makevars.win.in > src/Makevars.win
