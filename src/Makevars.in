@@ -9,7 +9,7 @@ LIBDIR = $(TARGET_DIR)/$(TARGET)/$(subst dev,debug,$(PROFILE))
 STATLIB = $(LIBDIR)/libwinit_r_package.a
 PKG_LIBS = -L$(LIBDIR) -lwinit_r_package
 
-CARGO_BUILD_ARGS = --lib --profile $(PROFILE) --manifest-path=./rust/winit_r_package/Cargo.toml --target-dir $(TARGET_DIR) $(FEATURES)
+CARGO_BUILD_ARGS = --lib --profile $(PROFILE) --manifest-path=./rust/winit_r_package/Cargo.toml --target-dir $(TARGET_DIR) $(FEATURES) -v
 
 all: C_clean
 
