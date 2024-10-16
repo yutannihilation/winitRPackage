@@ -34,8 +34,6 @@ fi
 
 if [ "$(uname)" != "Darwin" ]; then
   FEATURES="--features use_winit"
-  MACOS_LIBS="-lobjc"
-  MACOS_CFLAGS="-fobjc-exceptions -fobjc-arc -fobjc-arc-exceptions"
 fi
 
 sed \
