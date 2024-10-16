@@ -2,8 +2,11 @@ Package: winitRPackage
 Title: Use 'winit' From R
 Version: 0.0.2
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+    person(given = "Hiroaki",
+        family = "Yutani",
+        role = c("aut", "cre"),
+        email = "yutani.ini@gmail.com",
+        comment = c(ORCID = "0000-0002-3385-7233"))
 Description: A proof of concept to show how to use the winit Rust crate from R.
 License: MIT + file LICENSE
 Encoding: UTF-8
