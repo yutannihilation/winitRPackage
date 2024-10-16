@@ -10,6 +10,10 @@ name: R-CMD-check.yaml
 
 permissions: read-all
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
@@ -48,6 +52,10 @@ jobs:
         with:
           workspaces: src/rust
 
+      - name: debug
+        run: |
+          Rscript -e 'pkgbuild::compile_dll(debug = FALSE)' 2>&1 | grep "cargo::"
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-results: 'never'
@@ -61,4 +69,3 @@ jobs:
           cat ./check/winitRPackage.Rcheck/00install.out
           echo "--<< 00check.log >>-------------------------"
           cat ./check/winitRPackage.Rcheck/00check.log
-        shell: bash

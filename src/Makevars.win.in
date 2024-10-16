@@ -25,7 +25,7 @@ $(STATLIB):
 
 	export CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER="$(CARGO_LINKER)" && \
 	  export LIBRARY_PATH="$${LIBRARY_PATH};$(LIBDIR)/libgcc_mock" && \
-	  cargo build --target $(TARGET) --lib --profile $(PROFILE) --manifest-path ./rust/winit_r_package/Cargo.toml --target-dir $(TARGET_DIR) --features use_winit -v
+	  cargo build --target $(TARGET) --lib --profile $(PROFILE) --manifest-path ./rust/winit_r_package/Cargo.toml --target-dir $(TARGET_DIR) --features use_winit -vvv
 
 C_clean:
 	rm -Rf $(SHLIB) $(STATLIB) $(OBJECTS)
