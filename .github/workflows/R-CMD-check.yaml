@@ -45,6 +45,8 @@ jobs:
           needs: check
 
       - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: rust-cache
 
       - uses: r-lib/actions/check-r-package@v2
         with:
