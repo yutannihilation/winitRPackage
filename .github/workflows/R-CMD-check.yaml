@@ -46,7 +46,7 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: "src/rust -> ${{ runner.temp }}/rust-target"
+          workspaces: src/rust
           shared-key: rust-cache-${{ runner.os }}-${{ matrix.config.rust }}
 
       - uses: r-lib/actions/check-r-package@v2
@@ -58,7 +58,11 @@ jobs:
       - name: show install log
         if: always()
         run: |
+          echo "--<< Makevars >>----------------------------"
+          cat ./check/winitRPackage.Rcheck/src/Makevars || true
+          echo "--<< Makevars.win >>------------------------"
+          cat ./check/winitRPackage.Rcheck/src/Makevars.win || true
           echo "--<< 00install.out >>-----------------------"
           cat ./check/winitRPackage.Rcheck/00install.out
-          echo "--<< 00check.log >>-----------------------"
+          echo "--<< 00check.log >>-------------------------"
           cat ./check/winitRPackage.Rcheck/00check.log
