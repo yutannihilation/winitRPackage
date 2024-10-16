@@ -44,7 +44,7 @@ jobs:
           else
             PROFILE=dev
           fi
-          cargo build --profile $${PROFILE} --manifest-path ./src/rust/Cargo.toml --bin winit_r_package_server
+          cargo build --profile ${PROFILE} --manifest-path ./src/rust/Cargo.toml --bin winit_r_package_server
         shell: bash
 
       - uses: actions/upload-artifact@v4
