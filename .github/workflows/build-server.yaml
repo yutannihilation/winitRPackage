@@ -34,6 +34,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         if: github.ref_type != 'tag'  # cache only debug build
         with:
+          workspaces: src/rust
           shared-key: rust-cache
 
       - name: Build Rust server
