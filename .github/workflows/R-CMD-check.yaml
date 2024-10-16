@@ -58,10 +58,6 @@ jobs:
       - name: show install log
         if: always()
         run: |
-          echo "--<< Makevars >>----------------------------"
-          cat ./check/winitRPackage.Rcheck/src/Makevars || true
-          echo "--<< Makevars.win >>------------------------"
-          cat ./check/winitRPackage.Rcheck/src/Makevars.win || true
           echo "--<< 00install.out >>-----------------------"
           cat ./check/winitRPackage.Rcheck/00install.out
           echo "--<< 00check.log >>-------------------------"
